@@ -1,5 +1,5 @@
 from PySide2.QtCore import QSize, Qt
-from PySide2.QtWidgets import QListView, QListWidget, QListWidgetItem
+from PySide2.QtWidgets import QListView, QListWidget, QListWidgetItem, QSizePolicy, QAbstractItemView
 from PySide2.QtGui import QIcon
 from typing import List
 
@@ -11,7 +11,9 @@ class Preview_List_Widget(QListWidget):
         self.setViewMode(QListView.IconMode)
         self.setIconSize(QSize(100, 100))
         self.setWrapping(False)
-        self.setMaximumHeight(150)
+        self.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
+        self.setMinimumWidth(500)
+        self.setFixedHeight(150)
         self.setSpacing(10)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
@@ -24,5 +26,4 @@ class Preview_List_Widget(QListWidget):
         for img in img_list:
             item = QListWidgetItem("Default")
             item.setIcon(QIcon(img))
-            item.setSizeHint(QSize(100, 100))
             self.addItem(item)
