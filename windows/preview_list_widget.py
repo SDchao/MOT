@@ -16,6 +16,7 @@ class Preview_List_Widget(QListWidget):
         self.setFixedHeight(150)
         self.setSpacing(10)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setMovement(QListView.Static)
 
     def insert_item(self, img_list: List):
         """Insert serveral image items into ListView
