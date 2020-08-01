@@ -3,7 +3,7 @@ from PySide2.QtCore import Slot
 import sys
 
 
-class Main_Window(QMainWindow):
+class MainWindow(QMainWindow):
     def __init__(self, widget):
         QMainWindow.__init__(self)
 

@@ -2,9 +2,11 @@ from PySide2.QtCore import QSize, Qt
 from PySide2.QtWidgets import QListView, QListWidget, QListWidgetItem, QSizePolicy, QAbstractItemView
 from PySide2.QtGui import QIcon
 from typing import List
+from PySide2.QtGui import QPainter
+from PySide2.QtCore import Qt, QRect
 
 
-class Preview_List_Widget(QListWidget):
+class PreviewListWidget(QListWidget):
     def __init__(self):
         QListWidget.__init__(self)
         self.setFlow(QListView.LeftToRight)

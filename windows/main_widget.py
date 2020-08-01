@@ -3,10 +3,11 @@ from PySide2.QtMultimedia import QMediaPlayer, QMediaPlaylist
 from PySide2.QtCore import QUrl
 from PySide2.QtMultimediaWidgets import QVideoWidget
 from PySide2.QtGui import QPixmap
-from windows.preview_list_widget import Preview_List_Widget
+from windows.preview_list_widget import PreviewListWidget
+# from windows.main_video_widget import MainVideoWidget
 
 
-class Main_Widget(QWidget):
+class MainWidget(QWidget):
     def __init__(self):
         QWidget.__init__(self)
 
@@ -43,14 +44,12 @@ class Main_Widget(QWidget):
             self.left_v_layout.addWidget(button)
 
         # 视频预览列表
-        self.preview_list = Preview_List_Widget()
+        self.preview_list = PreviewListWidget()
 
         # 视频窗口
-        self.main_video_player = QVideoWidget()
-        self.player.setVideoOutput(self.main_video_player)
-        self.main_video_player.setMinimumSize(720, 405)
-
-        self.player.play()
+        self.main_video_widget = QVideoWidget()
+        self.player.setVideoOutput(self.main_video_widget)
+        self.main_video_widget.setMinimumSize(720, 405)
 
         # 右下摄像机表格
         self.camrea_table = QTableWidget(3, 5)
@@ -65,7 +64,7 @@ class Main_Widget(QWidget):
                 self.camrea_table.setItem(i, j, QTableWidgetItem(str(count)))
         
         # 右下尾随状态
-        self.follow_state = QLabel()
+        self.follow_state = QLabel("Test")
         pixmap = QPixmap("windows/images/Default.png")
         self.follow_state.setPixmap(pixmap)
         self.follow_state.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -87,7 +86,7 @@ class Main_Widget(QWidget):
         # 视频预览 0 1 -> 1 5
         self.base_layout.addWidget(self.preview_list, 0, 1, 1, 5)
         # 主视频播放 1 1 -> 3 3
-        self.base_layout.addWidget(self.main_video_player, 1, 1, 2, 2)
+        self.base_layout.addWidget(self.main_video_widget, 1, 1, 2, 2)
         # 右下状态 1 4 -> 3 5
         self.base_layout.addLayout(self.right_v_layout, 1, 4, 2, 1)
 
@@ -95,6 +94,8 @@ class Main_Widget(QWidget):
         self.base_layout.setVerticalSpacing(10)
 
         self.setLayout(self.base_layout)
+        self.player.play()
 
     def position_changed(self, duration):
-        print("Current Video Position: " + str(duration) + "ms")
+        # self.main_video_widget.update()
+        pass

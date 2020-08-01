@@ -1,13 +1,13 @@
 from PySide2.QtWidgets import QApplication
 import sys
-from windows.main_window import Main_Window
-from windows.main_widget import Main_Widget
+from windows.main_window import MainWindow
+from windows.main_widget import MainWidget
 
 
 app = QApplication(sys.argv)
 
-main_widget = Main_Widget()
-main_window = Main_Window(main_widget)
+main_widget = MainWidget()
+main_window = MainWindow(main_widget)
 main_window.show()
 
 preview_list = main_widget.preview_list
