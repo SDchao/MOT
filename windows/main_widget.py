@@ -5,7 +5,7 @@ from PySide2.QtMultimediaWidgets import QVideoWidget, QGraphicsVideoItem
 from PySide2.QtGui import QPixmap
 from windows.preview_list_widget import PreviewListWidget
 from windows.paint_board import PaintBoard
-
+from windows.video_view import VideoGraphicsView
 
 class MainWidget(QWidget):
     def __init__(self):
@@ -15,7 +15,7 @@ class MainWidget(QWidget):
         self.player = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         # 设置帧触发器
         self.player.positionChanged.connect(self.position_changed)
-        self.player.setNotifyInterval(1000 / 60)
+        self.player.setNotifyInterval(1000 / 30)
         self.play_list = QMediaPlaylist()
         # self.play_list.addMedia(QMediaContent(QUrl.fromLocalFile("windows/videos/default.mp4")))
         self.play_list.addMedia(QUrl("windows/videos/default.mp4"))
@@ -63,21 +63,21 @@ class MainWidget(QWidget):
         self.main_video_widget.setMinimumSize(1272, 720)
         lay.addWidget(self.main_video_widget)
         """
-        self.main_video_view = QGraphicsView()
-        scene = QGraphicsScene()
-        item = QGraphicsVideoItem()
+        self.main_video_view = VideoGraphicsView(self.player, 1272, 720)
+        # scene = QGraphicsScene()
+        # item = QGraphicsVideoItem()
 
-        self.main_video_view.setScene(scene)
-        self.main_video_view.setMinimumSize(1272, 720 + 4)
-        self.main_video_view.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.main_video_view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        # self.main_video_view.setScene(scene)
+        # self.main_video_view.setMinimumSize(1272, 720 + 4)
+        # self.main_video_view.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        # self.main_video_view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         # item.setSize(QSizeF(1272, 720))
         # scene.setSceneRect(0, 0, 1272, 720)
-        scene.addItem(item)
-        self.player.setVideoOutput(item)
+        # scene.addItem(item)
+        # self.player.setVideoOutput(item)
 
         self.paint_board = PaintBoard()
-        scene.addWidget(self.paint_board)
+        self.main_video_view.scene().addWidget(self.paint_board)
 
 
         # 右下摄像机表格
@@ -128,4 +128,5 @@ class MainWidget(QWidget):
     def position_changed(self, duration):
         # self.main_video_widget.update()
         # self.test_button.move(3,3)
+        self.paint_board.update()
         pass
