@@ -46,11 +46,13 @@ class MainWidget(QWidget):
         self.preview_list = PreviewListWidget()
 
         # 视频窗口
+        # 视频容器，用于添加子控件
         self.main_video_container = QWidget()
+        # layout，作为容器的布局
         lay = QVBoxLayout(self.main_video_container)
         lay.setContentsMargins(0, 0, 0, 0)
         
-
+        # 显示视频的空间，放置于layout中
         self.main_video_widget = QVideoWidget()
         self.player.setVideoOutput(self.main_video_widget)
         self.main_video_widget.setMinimumSize(720, 405)
