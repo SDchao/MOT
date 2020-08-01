@@ -4,6 +4,7 @@ from PySide2.QtCore import QUrl
 from PySide2.QtMultimediaWidgets import QVideoWidget
 from PySide2.QtGui import QPixmap
 from windows.preview_list_widget import PreviewListWidget
+from windows.paint_board import PaintBoard
 
 
 class MainWidget(QWidget):
@@ -49,10 +50,13 @@ class MainWidget(QWidget):
         # 视频容器，用于添加子控件
         self.main_video_container = QWidget()
         # layout，作为容器的布局
-        lay = QVBoxLayout(self.main_video_container)
+        # lay = QVBoxLayout(self.main_video_container)
+        lay = QVBoxLayout()
         lay.setContentsMargins(0, 0, 0, 0)
-        
-        # 显示视频的空间，放置于layout中
+
+        self.main_video_container.setLayout(lay)
+
+        # 显示视频的控件，放置于layout中
         self.main_video_widget = QVideoWidget()
         self.player.setVideoOutput(self.main_video_widget)
         self.main_video_widget.setMinimumSize(720, 405)
