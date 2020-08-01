@@ -4,7 +4,6 @@ from PySide2.QtCore import QUrl
 from PySide2.QtMultimediaWidgets import QVideoWidget
 from PySide2.QtGui import QPixmap
 from windows.preview_list_widget import PreviewListWidget
-# from windows.main_video_widget import MainVideoWidget
 
 
 class MainWidget(QWidget):
@@ -47,9 +46,15 @@ class MainWidget(QWidget):
         self.preview_list = PreviewListWidget()
 
         # 视频窗口
+        self.main_video_container = QWidget()
+        lay = QVBoxLayout(self.main_video_container)
+        lay.setContentsMargins(0, 0, 0, 0)
+        
+
         self.main_video_widget = QVideoWidget()
         self.player.setVideoOutput(self.main_video_widget)
         self.main_video_widget.setMinimumSize(720, 405)
+        lay.addWidget(self.main_video_widget)
 
         # 右下摄像机表格
         self.camrea_table = QTableWidget(3, 5)
@@ -86,7 +91,7 @@ class MainWidget(QWidget):
         # 视频预览 0 1 -> 1 5
         self.base_layout.addWidget(self.preview_list, 0, 1, 1, 5)
         # 主视频播放 1 1 -> 3 3
-        self.base_layout.addWidget(self.main_video_widget, 1, 1, 2, 2)
+        self.base_layout.addWidget(self.main_video_container, 1, 1, 2, 2)
         # 右下状态 1 4 -> 3 5
         self.base_layout.addLayout(self.right_v_layout, 1, 4, 2, 1)
 
@@ -98,4 +103,5 @@ class MainWidget(QWidget):
 
     def position_changed(self, duration):
         # self.main_video_widget.update()
+        # self.test_button.move(3,3)
         pass
