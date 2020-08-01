@@ -64,18 +64,6 @@ class MainWidget(QWidget):
         lay.addWidget(self.main_video_widget)
         """
         self.main_video_view = VideoGraphicsView(self.player, 1272, 720)
-        # scene = QGraphicsScene()
-        # item = QGraphicsVideoItem()
-
-        # self.main_video_view.setScene(scene)
-        # self.main_video_view.setMinimumSize(1272, 720 + 4)
-        # self.main_video_view.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        # self.main_video_view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        # item.setSize(QSizeF(1272, 720))
-        # scene.setSceneRect(0, 0, 1272, 720)
-        # scene.addItem(item)
-        # self.player.setVideoOutput(item)
-
         self.paint_board = PaintBoard()
         self.main_video_view.scene().addWidget(self.paint_board)
 
@@ -125,8 +113,6 @@ class MainWidget(QWidget):
         self.setLayout(self.base_layout)
         self.player.play()
 
-    def position_changed(self, duration):
-        # self.main_video_widget.update()
-        # self.test_button.move(3,3)
+    def position_changed(self, pos):
         self.paint_board.update()
         pass
