@@ -1,7 +1,7 @@
-from PySide2.QtWidgets import QWidget, QPushButton, QVBoxLayout, QGridLayout, QSizePolicy, QTableWidget, QTableWidgetItem, QAbstractItemView, QLabel
+from PySide2.QtWidgets import QWidget, QPushButton, QVBoxLayout, QGridLayout, QSizePolicy, QTableWidget, QTableWidgetItem, QAbstractItemView, QLabel, QGraphicsView, QGraphicsScene
 from PySide2.QtMultimedia import QMediaPlayer, QMediaPlaylist
-from PySide2.QtCore import QUrl
-from PySide2.QtMultimediaWidgets import QVideoWidget
+from PySide2.QtCore import QUrl, QSizeF, QSize, Qt
+from PySide2.QtMultimediaWidgets import QVideoWidget, QGraphicsVideoItem
 from PySide2.QtGui import QPixmap
 from windows.preview_list_widget import PreviewListWidget
 from windows.paint_board import PaintBoard
@@ -47,6 +47,7 @@ class MainWidget(QWidget):
         self.preview_list = PreviewListWidget()
 
         # 视频窗口
+        """
         # 视频容器，用于添加子控件
         self.main_video_container = QWidget()
         # layout，作为容器的布局
@@ -59,8 +60,25 @@ class MainWidget(QWidget):
         # 显示视频的控件，放置于layout中
         self.main_video_widget = QVideoWidget()
         self.player.setVideoOutput(self.main_video_widget)
-        self.main_video_widget.setMinimumSize(720, 405)
+        self.main_video_widget.setMinimumSize(1272, 720)
         lay.addWidget(self.main_video_widget)
+        """
+        self.main_video_view = QGraphicsView()
+        scene = QGraphicsScene()
+        item = QGraphicsVideoItem()
+
+        self.main_video_view.setScene(scene)
+        self.main_video_view.setMinimumSize(1272, 720 + 4)
+        self.main_video_view.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.main_video_view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        # item.setSize(QSizeF(1272, 720))
+        # scene.setSceneRect(0, 0, 1272, 720)
+        scene.addItem(item)
+        self.player.setVideoOutput(item)
+
+        self.paint_board = PaintBoard()
+        scene.addWidget(self.paint_board)
+
 
         # 右下摄像机表格
         self.camrea_table = QTableWidget(3, 5)
@@ -97,7 +115,7 @@ class MainWidget(QWidget):
         # 视频预览 0 1 -> 1 5
         self.base_layout.addWidget(self.preview_list, 0, 1, 1, 5)
         # 主视频播放 1 1 -> 3 3
-        self.base_layout.addWidget(self.main_video_container, 1, 1, 2, 2)
+        self.base_layout.addWidget(self.main_video_view, 1, 1, 2, 2)
         # 右下状态 1 4 -> 3 5
         self.base_layout.addLayout(self.right_v_layout, 1, 4, 2, 1)
 
