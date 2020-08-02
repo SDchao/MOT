@@ -1,5 +1,5 @@
 from PySide2.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QGridLayout,
-                               QSizePolicy, QTableWidget, QTableWidgetItem, 
+                               QSizePolicy, QTableWidget, QTableWidgetItem,
                                QAbstractItemView, QLabel)
 from PySide2.QtMultimedia import QMediaPlayer, QMediaPlaylist
 from PySide2.QtCore import QUrl
@@ -72,18 +72,18 @@ class MainWidget(QWidget):
         self.main_video_view.mousePressEvent = self.video_mouse_press
 
         # 右下摄像机表格
-        self.camrea_table = QTableWidget(3, 5)
-        self.camrea_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.camrea_table.setSelectionBehavior(QAbstractItemView.SelectItems)
-        self.camrea_table.setHorizontalHeaderLabels(
+        self.camera_table = QTableWidget(3, 5)
+        self.camera_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.camera_table.setSelectionBehavior(QAbstractItemView.SelectItems)
+        self.camera_table.setHorizontalHeaderLabels(
             ["C1", "C2", "C3", "C4", "C5"])
-        self.camrea_table.setSizePolicy(
+        self.camera_table.setSizePolicy(
             QSizePolicy.Expanding, QSizePolicy.Fixed)
         count = 0
         for i in range(0, 3):
             for j in range(0, 5):
                 count += 1
-                self.camrea_table.setItem(i, j, QTableWidgetItem(str(count)))
+                self.camera_table.setItem(i, j, QTableWidgetItem(str(count)))
 
         # 右下尾随状态
         self.follow_state = QLabel("Test")
@@ -98,7 +98,7 @@ class MainWidget(QWidget):
         right_v_layout.setSpacing(10)
         right_v_layout.setMargin(10)
 
-        right_v_layout.addWidget(self.camrea_table)
+        right_v_layout.addWidget(self.camera_table)
         right_v_layout.addWidget(self.follow_state)
 
         # 窗口的底层Layout
@@ -119,7 +119,7 @@ class MainWidget(QWidget):
         self.player.play()
 
     def position_changed(self, pos):
-        if(hasattr(self, "paint_board")):
+        if hasattr(self, "paint_board"):
             self.paint_board.update()
 
     def video_mouse_press(self, event: QMouseEvent):
