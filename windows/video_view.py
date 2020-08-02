@@ -9,7 +9,7 @@ class VideoGraphicsView(QGraphicsView):
         self.video_item = QGraphicsVideoItem()
 
         self.setScene(self.video_scene)
-        self.setMinimumSize(w, h + 4)
+        self.setFixedSize(w, h + 4)
         self.video_item.setSize(QSizeF(w, h))
         self.video_scene.setSceneRect(0, 0, w, h)
         self.video_scene.addItem(self.video_item)
