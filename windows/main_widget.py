@@ -1,11 +1,12 @@
-from PySide2.QtWidgets import QWidget, QPushButton, QVBoxLayout, QGridLayout, QSizePolicy, QTableWidget, QTableWidgetItem, QAbstractItemView, QLabel, QGraphicsView, QGraphicsScene
+from PySide2.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QGridLayout,
+                               QSizePolicy, QTableWidget, QTableWidgetItem, QAbstractItemView, QLabel)
 from PySide2.QtMultimedia import QMediaPlayer, QMediaPlaylist
-from PySide2.QtCore import QUrl, QSizeF, QSize, Qt
-from PySide2.QtMultimediaWidgets import QVideoWidget, QGraphicsVideoItem
+from PySide2.QtCore import QUrl
 from PySide2.QtGui import QPixmap
 from windows.preview_list_widget import PreviewListWidget
 from windows.paint_board import PaintBoard
 from windows.video_view import VideoGraphicsView
+
 
 class MainWidget(QWidget):
     def __init__(self):
@@ -67,24 +68,26 @@ class MainWidget(QWidget):
         self.paint_board = PaintBoard()
         self.main_video_view.scene().addWidget(self.paint_board)
 
-
         # 右下摄像机表格
         self.camrea_table = QTableWidget(3, 5)
         self.camrea_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.camrea_table.setSelectionBehavior(QAbstractItemView.SelectItems)
-        self.camrea_table.setHorizontalHeaderLabels(["C1", "C2", "C3", "C4", "C5"])
-        self.camrea_table.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.camrea_table.setHorizontalHeaderLabels(
+            ["C1", "C2", "C3", "C4", "C5"])
+        self.camrea_table.setSizePolicy(
+            QSizePolicy.Expanding, QSizePolicy.Fixed)
         count = 0
         for i in range(0, 3):
             for j in range(0, 5):
                 count += 1
                 self.camrea_table.setItem(i, j, QTableWidgetItem(str(count)))
-        
+
         # 右下尾随状态
         self.follow_state = QLabel("Test")
         pixmap = QPixmap("windows/images/Default.png")
         self.follow_state.setPixmap(pixmap)
-        self.follow_state.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.follow_state.setSizePolicy(
+            QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.follow_state.setScaledContents(True)
 
         # 右下布局
@@ -94,7 +97,6 @@ class MainWidget(QWidget):
 
         self.right_v_layout.addWidget(self.camrea_table)
         self.right_v_layout.addWidget(self.follow_state)
-
 
         # 窗口的底层Layout
         self.base_layout = QGridLayout()
