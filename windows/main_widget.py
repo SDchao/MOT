@@ -28,21 +28,21 @@ class MainWidget(QWidget):
         self.button_open_mot = QPushButton("打开MOT")
         self.button_open_ReID = QPushButton("打开ReID")
 
-        self.left_button_group = (
+        left_button_group = (
             self.button_select_face, self.button_open_mot, self.button_open_ReID)
 
-        for button in self.left_button_group:
+        for button in left_button_group:
             button.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
             button.setMinimumWidth(300)
             button.setMaximumHeight(200)
 
         # 左侧功能按钮布局
-        self.left_v_layout = QVBoxLayout()
-        self.left_v_layout.setSpacing(10)
-        self.left_v_layout.setMargin(10)
+        left_v_layout = QVBoxLayout()
+        left_v_layout.setSpacing(10)
+        left_v_layout.setMargin(10)
 
-        for button in self.left_button_group:
-            self.left_v_layout.addWidget(button)
+        for button in left_button_group:
+            left_v_layout.addWidget(button)
 
         # 视频预览列表
         self.preview_list = PreviewListWidget()
@@ -93,28 +93,28 @@ class MainWidget(QWidget):
         self.follow_state.setScaledContents(True)
 
         # 右下布局
-        self.right_v_layout = QVBoxLayout()
-        self.right_v_layout.setSpacing(10)
-        self.right_v_layout.setMargin(10)
+        right_v_layout = QVBoxLayout()
+        right_v_layout.setSpacing(10)
+        right_v_layout.setMargin(10)
 
-        self.right_v_layout.addWidget(self.camrea_table)
-        self.right_v_layout.addWidget(self.follow_state)
+        right_v_layout.addWidget(self.camrea_table)
+        right_v_layout.addWidget(self.follow_state)
 
         # 窗口的底层Layout
-        self.base_layout = QGridLayout()
+        base_layout = QGridLayout()
         # 左侧功能按钮 0 0 -> 3 1
-        self.base_layout.addLayout(self.left_v_layout, 0, 0, 3, 1)
+        base_layout.addLayout(left_v_layout, 0, 0, 3, 1)
         # 视频预览 0 1 -> 1 5
-        self.base_layout.addWidget(self.preview_list, 0, 1, 1, 5)
+        base_layout.addWidget(self.preview_list, 0, 1, 1, 5)
         # 主视频播放 1 1 -> 3 3
-        self.base_layout.addWidget(self.main_video_view, 1, 1, 2, 2)
+        base_layout.addWidget(self.main_video_view, 1, 1, 2, 2)
         # 右下状态 1 4 -> 3 5
-        self.base_layout.addLayout(self.right_v_layout, 1, 4, 2, 1)
+        base_layout.addLayout(right_v_layout, 1, 4, 2, 1)
 
-        self.base_layout.setHorizontalSpacing(10)
-        self.base_layout.setVerticalSpacing(10)
+        base_layout.setHorizontalSpacing(10)
+        base_layout.setVerticalSpacing(10)
 
-        self.setLayout(self.base_layout)
+        self.setLayout(base_layout)
         self.player.play()
 
     def position_changed(self, pos):
