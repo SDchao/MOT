@@ -3,7 +3,6 @@ import sys
 from windows.main_window import MainWindow
 from windows.main_widget import MainWidget
 
-
 app = QApplication(sys.argv)
 
 main_widget = MainWidget()
