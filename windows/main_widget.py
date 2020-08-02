@@ -2,7 +2,7 @@ from PySide2.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QGridLayout,
                                QSizePolicy, QTableWidget, QTableWidgetItem, QAbstractItemView, QLabel)
 from PySide2.QtMultimedia import QMediaPlayer, QMediaPlaylist
 from PySide2.QtCore import QUrl
-from PySide2.QtGui import QPixmap
+from PySide2.QtGui import QPixmap, QMouseEvent
 from windows.preview_list_widget import PreviewListWidget
 from windows.paint_board import PaintBoard
 from windows.video_view import VideoGraphicsView
@@ -68,6 +68,8 @@ class MainWidget(QWidget):
         self.paint_board = PaintBoard()
         self.main_video_view.scene().addWidget(self.paint_board)
 
+        self.main_video_view.mousePressEvent = self.video_mouse_press
+
         # 右下摄像机表格
         self.camrea_table = QTableWidget(3, 5)
         self.camrea_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
@@ -118,3 +120,6 @@ class MainWidget(QWidget):
     def position_changed(self, pos):
         if(hasattr(self, "paint_board")):
             self.paint_board.update()
+
+    def video_mouse_press(self, event : QMouseEvent):
+        print(event.x(), event.y())
