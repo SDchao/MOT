@@ -114,5 +114,5 @@ class MainWidget(QWidget):
         self.player.play()
 
     def position_changed(self, pos):
-        self.paint_board.update()
-        pass
+        if(hasattr(self, "paint_board")):
+            self.paint_board.update()
