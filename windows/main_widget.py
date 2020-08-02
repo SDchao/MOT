@@ -1,5 +1,6 @@
 from PySide2.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QGridLayout,
-                               QSizePolicy, QTableWidget, QTableWidgetItem, QAbstractItemView, QLabel)
+                               QSizePolicy, QTableWidget, QTableWidgetItem, 
+                               QAbstractItemView, QLabel)
 from PySide2.QtMultimedia import QMediaPlayer, QMediaPlaylist
 from PySide2.QtCore import QUrl
 from PySide2.QtGui import QPixmap, QMouseEvent
@@ -121,5 +122,5 @@ class MainWidget(QWidget):
         if(hasattr(self, "paint_board")):
             self.paint_board.update()
 
-    def video_mouse_press(self, event : QMouseEvent):
+    def video_mouse_press(self, event: QMouseEvent):
         print(event.x(), event.y())
