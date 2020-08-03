@@ -7,6 +7,9 @@ app = QApplication(sys.argv)
 
 main_widget = MainWidget()
 main_window = MainWindow(main_widget)
+
+app.setStyleSheet(open("windows/qss/MainStyle.qss", "r").read())
+
 main_window.show()
 
 preview_list = main_widget.preview_list
