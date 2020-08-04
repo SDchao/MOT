@@ -37,6 +37,6 @@ def get_video_info(video_path: str) -> VideoInfo:
     fps = cap.get(cv2.CAP_PROP_FPS)
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA)
     cap.release()
-    qimage = QImage(frame_rgb.data, size.width(), size.height(), 3 * size.width(),
-                    QImage.Format_RGB888).rgbSwapped()
-    return VideoInfo(True, qimage, size, name, fps)
+    q_image = QImage(frame_rgb.data, size.width(), size.height(), 3 * size.width(),
+                     QImage.Format_RGB888).rgbSwapped()
+    return VideoInfo(True, q_image, size, name, fps)
