@@ -2,7 +2,7 @@ from PySide2.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QGridLayout,
                                QSizePolicy, QTableWidget, QTableWidgetItem,
                                QAbstractItemView, QLabel)
 from PySide2.QtMultimedia import QMediaPlayer, QMediaPlaylist
-from PySide2.QtCore import QUrl
+from PySide2.QtCore import QUrl, QFileInfo
 from PySide2.QtGui import QPixmap, QMouseEvent
 from windows.preview_list_widget import PreviewListWidget
 from windows.paint_board import PaintBoard
@@ -20,7 +20,7 @@ class MainWidget(QWidget):
         self.player.setNotifyInterval(1000 / 30)
         self.play_list = QMediaPlaylist()
         # self.play_list.addMedia(QMediaContent(QUrl.fromLocalFile("windows/videos/default.mp4")))
-        self.play_list.addMedia(QUrl("windows/videos/default.mp4"))
+        self.play_list.addMedia(QUrl.fromLocalFile(QFileInfo("windows/videos/default.mp4").absoluteFilePath()))
         self.play_list.setPlaybackMode(QMediaPlaylist.Loop)
         self.player.setPlaylist(self.play_list)
 
