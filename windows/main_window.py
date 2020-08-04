@@ -13,7 +13,7 @@ class MainWindow(QMainWindow):
         self.menu = self.menuBar()
         self.file_menu = self.menu.addMenu("文件")
         # File
-        ## Exit
+        # Exit
         exit_action = QAction("退出", self)
         exit_action.setShortcut("Ctrl+Q")
         exit_action.triggered.connect(self.exit_app)
@@ -21,7 +21,7 @@ class MainWindow(QMainWindow):
 
         # Help
         self.help_menu = self.menu.addMenu("帮助")
-        ## About
+        # About
         about_action = QAction("关于", self)
         self.help_menu.addAction(about_action)
 
