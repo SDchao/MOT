@@ -1,12 +1,13 @@
 from PySide2.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QGridLayout,
                                QSizePolicy, QTableWidget, QTableWidgetItem,
-                               QAbstractItemView, QLabel)
+                               QAbstractItemView, QLabel, QListWidgetItem)
 from PySide2.QtMultimedia import QMediaPlayer, QMediaPlaylist
 from PySide2.QtCore import QUrl, QFileInfo
 from PySide2.QtGui import QPixmap, QMouseEvent
 from windows.preview_list_widget import PreviewListWidget
 from windows.paint_board import PaintBoard
 from windows.video_view import VideoGraphicsView
+from windows.preview_item import PreviewItem
 
 
 class MainWidget(QWidget):
@@ -47,6 +48,7 @@ class MainWidget(QWidget):
 
         # 视频预览列表
         self.preview_list = PreviewListWidget()
+        self.preview_list.itemActivated.connect(self.on_list_item_activated)
 
         # 视频窗口
         """
@@ -124,3 +126,13 @@ class MainWidget(QWidget):
 
     def video_mouse_press(self, event: QMouseEvent):
         print(event.x(), event.y())
+
+    def on_list_item_activated(self, item: QListWidgetItem):
+        if isinstance(item, PreviewItem):
+            path = item.video_path
+            self.play_list.clear()
+            self.play_list.addMedia(QUrl.fromLocalFile(QFileInfo(path).absoluteFilePath()))
+            self.player.play()
+            print("Now playing: " + path)
+        else:
+            print("Selected item is not a video preview!")

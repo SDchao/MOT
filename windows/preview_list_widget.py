@@ -1,7 +1,7 @@
 from PySide2.QtCore import QSize
 from PySide2.QtWidgets import QListView, QListWidget, QListWidgetItem, QSizePolicy
-from PySide2.QtGui import QIcon, QPixmap, QImage
 from PySide2.QtCore import Qt
+from windows.preview_item import PreviewItem
 
 
 class PreviewListWidget(QListWidget):
@@ -18,11 +18,6 @@ class PreviewListWidget(QListWidget):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setMovement(QListView.Static)
 
-    def insert_item(self, img: QImage, name: str):
-        if len(name) > 10:
-            name = name[:10] + "..."
-        item = QListWidgetItem(name)
-        icon = QIcon(QPixmap(img))
-        item.setIcon(icon)
-        item.setSizeHint(QSize(300, 150))
+    def insert_item(self, item: PreviewItem):
         self.addItem(item)
+        print("Found video: " + item.video_path)
