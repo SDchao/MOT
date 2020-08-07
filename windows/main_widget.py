@@ -8,6 +8,7 @@ from windows.preview_list_widget import PreviewListWidget
 from windows.paint_board import PaintBoard
 from windows.video_view import VideoGraphicsView
 from windows.preview_item import PreviewItem
+from windows.map_label import MapLabel
 
 
 class MainWidget(QWidget):
@@ -88,11 +89,8 @@ class MainWidget(QWidget):
                 self.camera_table.setItem(i, j, QTableWidgetItem(str(count)))
 
         # 右下地图
-        self.map_label = QLabel("Test")
-        # pixmap = QPixmap("windows/images/Default.png").scaled(750, Qt.KeepAspectRatio)
-        # self.map_label.setPixmap(pixmap)
-        self.map_label.setScaledContents(True)
-        self.map_label.setFixedSize(411 * 2, 282 * 2)
+        self.map_label = MapLabel()
+        # self.map_label.setFixedSize(411 * 2, 282 * 2)
 
         # 右下布局
         right_v_layout = QVBoxLayout()
