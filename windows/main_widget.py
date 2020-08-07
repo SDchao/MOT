@@ -2,7 +2,7 @@ from PySide2.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QGridLayout,
                                QSizePolicy, QTableWidget, QTableWidgetItem,
                                QAbstractItemView, QLabel, QListWidgetItem)
 from PySide2.QtMultimedia import QMediaPlayer, QMediaPlaylist
-from PySide2.QtCore import QUrl, QFileInfo
+from PySide2.QtCore import QUrl, QFileInfo, Qt
 from PySide2.QtGui import QPixmap, QMouseEvent
 from windows.preview_list_widget import PreviewListWidget
 from windows.paint_board import PaintBoard
@@ -17,7 +17,7 @@ class MainWidget(QWidget):
         # 播放器
         self.player = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         # 设置帧触发器
-        self.player.positionChanged.connect(self.position_changed)
+        self.player.positionChanged.connect(self.__on_position_changed)
         self.player.setNotifyInterval(1000 / 30)
         self.play_list = QMediaPlaylist()
         # self.play_list.addMedia(QMediaContent(QUrl.fromLocalFile("windows/videos/default.mp4")))
@@ -48,7 +48,7 @@ class MainWidget(QWidget):
 
         # 视频预览列表
         self.preview_list = PreviewListWidget()
-        self.preview_list.itemActivated.connect(self.on_list_item_activated)
+        self.preview_list.itemActivated.connect(self.__on_list_item_activated)
 
         # 视频窗口
         """
@@ -71,7 +71,7 @@ class MainWidget(QWidget):
         self.paint_board = PaintBoard()
         self.main_video_view.scene().addWidget(self.paint_board)
 
-        self.main_video_view.mousePressEvent = self.video_mouse_press
+        self.main_video_view.mousePressEvent = self.__on_video_mouse_press
 
         # 右下摄像机表格
         self.camera_table = QTableWidget(3, 5)
@@ -87,13 +87,12 @@ class MainWidget(QWidget):
                 count += 1
                 self.camera_table.setItem(i, j, QTableWidgetItem(str(count)))
 
-        # 右下尾随状态
-        self.follow_state = QLabel("Test")
-        pixmap = QPixmap("windows/images/Default.png")
-        self.follow_state.setPixmap(pixmap)
-        self.follow_state.setSizePolicy(
-            QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.follow_state.setScaledContents(True)
+        # 右下地图
+        self.map_label = QLabel("Test")
+        # pixmap = QPixmap("windows/images/Default.png").scaled(750, Qt.KeepAspectRatio)
+        # self.map_label.setPixmap(pixmap)
+        self.map_label.setScaledContents(True)
+        self.map_label.setFixedSize(411 * 2, 282 * 2)
 
         # 右下布局
         right_v_layout = QVBoxLayout()
@@ -101,7 +100,7 @@ class MainWidget(QWidget):
         right_v_layout.setMargin(10)
 
         right_v_layout.addWidget(self.camera_table)
-        right_v_layout.addWidget(self.follow_state)
+        right_v_layout.addWidget(self.map_label)
 
         # 窗口的底层Layout
         base_layout = QGridLayout()
@@ -120,14 +119,14 @@ class MainWidget(QWidget):
         self.setLayout(base_layout)
         self.player.play()
 
-    def position_changed(self, pos):
+    def __on_position_changed(self, pos):
         if hasattr(self, "paint_board"):
             self.paint_board.update()
 
-    def video_mouse_press(self, event: QMouseEvent):
+    def __on_video_mouse_press(self, event: QMouseEvent):
         print(event.x(), event.y())
 
-    def on_list_item_activated(self, item: QListWidgetItem):
+    def __on_list_item_activated(self, item: QListWidgetItem):
         if isinstance(item, PreviewItem):
             path = item.video_path
             self.play_list.clear()
@@ -136,3 +135,8 @@ class MainWidget(QWidget):
             print("Now playing: " + path)
         else:
             print("Selected item is not a video preview!")
+
+    def set_map(self, map_path: str):
+        pixmap = QPixmap(map_path).scaled(self.map_label.width(), self.map_label.height(), Qt.KeepAspectRatio,
+                                          Qt.SmoothTransformation)
+        self.map_label.setPixmap(pixmap)
