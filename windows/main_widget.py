@@ -36,8 +36,7 @@ class MainWidget(QWidget):
 
         for button in left_button_group:
             button.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
-            button.setMinimumWidth(300)
-            button.setMaximumHeight(200)
+            button.setMaximumHeight(100)
 
         # 左侧功能按钮布局
         left_v_layout = QVBoxLayout()
@@ -131,10 +130,9 @@ class MainWidget(QWidget):
             self.play_list.addMedia(QUrl.fromLocalFile(QFileInfo(path).absoluteFilePath()))
             self.player.play()
             print("Now playing: " + path)
+            self.map_label.set_now_pos(item.map_pos)
         else:
             print("Selected item is not a video preview!")
 
     def set_map(self, map_path: str):
-        pixmap = QPixmap(map_path).scaled(self.map_label.width(), self.map_label.height(), Qt.KeepAspectRatio,
-                                          Qt.SmoothTransformation)
-        self.map_label.setPixmap(pixmap)
+        self.map_label.set_map(QPixmap(map_path))
