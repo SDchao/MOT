@@ -12,7 +12,7 @@ class PreviewListWidget(QListWidget):
         self.setIconSize(QSize(200, 200))
         self.setWrapping(False)
         self.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
-        self.setMinimumWidth(500)
+        # self.setMinimumWidth(500)
         self.setFixedHeight(150)
         self.setSpacing(10)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)

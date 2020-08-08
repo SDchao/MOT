@@ -29,15 +29,13 @@ class MapLabel(QLabel):
             raw_size = self.raw_pixmap.size()
             now_size = self.pixmap().size()
 
-            print(now_size)
-
             k_w = now_size.width() / raw_size.width()
             k_h = now_size.height() / raw_size.height()
 
             pos = QPoint(self.now_pos.x() * k_w, self.now_pos.y() * k_h)
             painter = QPainter(self)
             pen = QPen()
-            pen.setWidth(30)
+            pen.setWidth(20)
             pen.setColor(Qt.red)
             pen.setCapStyle(Qt.RoundCap)
             painter.setPen(pen)

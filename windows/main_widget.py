@@ -101,14 +101,18 @@ class MainWidget(QWidget):
 
         # 窗口的底层Layout
         base_layout = QGridLayout()
-        # 左侧功能按钮 0 0 -> 3 1
-        base_layout.addLayout(left_v_layout, 0, 0, 3, 1)
-        # 视频预览 0 1 -> 1 5
-        base_layout.addWidget(self.preview_list, 0, 1, 1, 5)
-        # 主视频播放 1 1 -> 3 3
-        base_layout.addWidget(self.main_video_view, 1, 1, 2, 2)
-        # 右下状态 1 4 -> 3 5
-        base_layout.addLayout(right_v_layout, 1, 4, 2, 1)
+        # 左侧功能按钮
+        base_layout.addLayout(left_v_layout, 0, 0, 2, 1)
+        # 视频预览
+        base_layout.addWidget(self.preview_list, 0, 1, 1, 2)
+        # 主视频播放
+        base_layout.addWidget(self.main_video_view, 1, 1)
+        # 右下状态
+        base_layout.addLayout(right_v_layout, 1, 2)
+
+        base_layout.setColumnStretch(0, 1)
+        base_layout.setColumnStretch(1, 5)
+        base_layout.setColumnStretch(2, 3)
 
         base_layout.setHorizontalSpacing(10)
         base_layout.setVerticalSpacing(10)

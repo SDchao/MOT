@@ -2,6 +2,7 @@ from PySide2.QtMultimediaWidgets import QGraphicsVideoItem
 from PySide2.QtWidgets import QGraphicsView, QGraphicsScene
 from PySide2.QtCore import Qt, QSizeF
 
+
 class VideoGraphicsView(QGraphicsView):
     def __init__(self, player, w, h):
         QGraphicsView.__init__(self)
@@ -15,7 +16,6 @@ class VideoGraphicsView(QGraphicsView):
         self.video_scene.addItem(self.video_item)
 
         player.setVideoOutput(self.video_item)
-
 
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
