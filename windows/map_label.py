@@ -12,6 +12,7 @@ class MapLabel(QLabel):
         super().__init__(parent)
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         self.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        self.setMinimumSize(500, 500)
 
     def resizeEvent(self, event: QResizeEvent):
         if self.raw_pixmap:

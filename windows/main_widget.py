@@ -109,11 +109,10 @@ class MainWidget(QWidget):
         base_layout.addWidget(self.main_video_view, 1, 1)
         # 右下状态
         base_layout.addLayout(right_v_layout, 1, 2)
-
         base_layout.setColumnStretch(0, 1)
         base_layout.setColumnStretch(1, 5)
         base_layout.setColumnStretch(2, 3)
-        base_layout.setColumnMinimumWidth(2, 450)
+        base_layout.setColumnMinimumWidth(2, 500)
 
         base_layout.setHorizontalSpacing(10)
         base_layout.setVerticalSpacing(10)
