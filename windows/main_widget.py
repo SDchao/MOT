@@ -2,7 +2,7 @@ from PySide2.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QGridLayout,
                                QSizePolicy, QTableWidget, QTableWidgetItem,
                                QAbstractItemView, QLabel, QListWidgetItem)
 from PySide2.QtMultimedia import QMediaPlayer, QMediaPlaylist
-from PySide2.QtCore import QUrl, QFileInfo, Qt
+from PySide2.QtCore import QUrl, QFileInfo, QSize
 from PySide2.QtGui import QPixmap, QMouseEvent
 from windows.preview_list_widget import PreviewListWidget
 from windows.paint_board import PaintBoard
@@ -69,6 +69,7 @@ class MainWidget(QWidget):
         """
         self.main_video_view = VideoGraphicsView(self.player, 1272, 720)
         self.paint_board = PaintBoard()
+        self.paint_board.setFixedSize(self.main_video_view.size())
         self.main_video_view.scene().addWidget(self.paint_board)
 
         self.main_video_view.mousePressEvent = self.__on_video_mouse_press
@@ -122,19 +123,24 @@ class MainWidget(QWidget):
 
     def __on_position_changed(self, pos):
         if hasattr(self, "paint_board"):
+            self.paint_board.set_now_time(pos)
             self.paint_board.update()
 
     def __on_video_mouse_press(self, event: QMouseEvent):
         print(event.x(), event.y())
 
+    def __change_video(self, path: str):
+        self.play_list.clear()
+        self.play_list.addMedia(QUrl.fromLocalFile(QFileInfo(path).absoluteFilePath()))
+        self.player.play()
+        print("Now playing: " + path)
+
     def __on_list_item_activated(self, item: QListWidgetItem):
         if isinstance(item, PreviewItem):
-            path = item.video_path
-            self.play_list.clear()
-            self.play_list.addMedia(QUrl.fromLocalFile(QFileInfo(path).absoluteFilePath()))
-            self.player.play()
-            print("Now playing: " + path)
+            self.__change_video(item.video_path)
             self.map_label.set_now_pos(item.map_pos)
+            self.paint_board.read_data(item.video_path, item.fps)
+            self.paint_board.set_raw_size(item.video_size)
         else:
             print("Selected item is not a video preview!")
 

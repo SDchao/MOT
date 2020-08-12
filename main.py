@@ -32,7 +32,7 @@ cameras_info = info["cameras"]
 for camera_info in cameras_info:
     for video in camera_info["videos"]:
         video_info = video_operator.get_video_info(video_path + video)
-        item = PreviewItem(video_info.name, video_info.preview_image, video_path + video, camera_info["mapPos"])
+        item = PreviewItem(video_info, camera_info["mapPos"])
         main_widget.preview_list.insert_item(item)
 
 # Center Screen
