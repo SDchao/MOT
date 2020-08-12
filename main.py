@@ -32,6 +32,9 @@ cameras_info = info["cameras"]
 for camera_info in cameras_info:
     for video in camera_info["videos"]:
         video_info = video_operator.get_video_info(video_path + video)
+        if not video_info.no_err:
+            print("Unable to find " + video)
+            continue
         item = PreviewItem(video_info, camera_info["mapPos"])
         main_widget.preview_list.insert_item(item)
 
