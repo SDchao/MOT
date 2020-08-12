@@ -54,6 +54,7 @@ class VideoDataCollection(object):
 
     def __init__(self, data_path: str, fps: float):
         self.fps = fps
+        self.data_list = []
         try:
             with open(data_path, "r") as f:
                 for line in f:
