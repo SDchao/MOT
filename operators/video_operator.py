@@ -64,7 +64,10 @@ class VideoDataCollection(object):
                         data = VideoData(int(l_list[0]), int(l_list[1]), int(l_list[2]), int(l_list[3]), int(l_list[4]),
                                          int(l_list[5]))
                         self.data_list.append(data)
+
+            print(f"Read data {data_path} , found {len(self.data_list)} lines")
         except IOError as e:
+            print("Unable to read data: " + data_path)
             print(e)
 
     def get_data_by_time(self, time: int) -> List[VideoData]:
