@@ -1,7 +1,7 @@
 from PySide2.QtWidgets import QWidget
 from PySide2.QtCore import Qt, QSize, QRect
 from PySide2.QtGui import QPainter, QPen, QFont, QFontMetrics
-from operators.video_operator import VideoDataCollection, VideoData
+from operators.video_operator import VideoDataCollection
 import operators.video_operator as video_operator
 
 
@@ -41,7 +41,7 @@ class PaintBoard(QWidget):
                             data.vertexes[3] * self.kh]
 
                 painter.drawRect(vertexes[0], vertexes[1], vertexes[2], vertexes[3])
-                text_point = [vertexes[0] + self.text_offset[0], vertexes[1] + self.text_offset[1]]
+                # text_point = [vertexes[0] + self.text_offset[0], vertexes[1] + self.text_offset[1]]
 
                 text_w = self.metrics.width(str(data.no))
                 text_h = self.metrics.height()

@@ -4,6 +4,7 @@ from PySide2.QtCore import QSize
 import os
 
 from typing import List
+from operator import attrgetter
 
 
 class VideoInfo(object):
@@ -55,6 +56,8 @@ class VideoDataCollection(object):
     def __init__(self, data_path: str, fps: float):
         self.fps = fps
         self.data_list = []
+
+        self.last_index = 0
         try:
             with open(data_path, "r") as f:
                 for line in f:
@@ -64,19 +67,35 @@ class VideoDataCollection(object):
                         data = VideoData(int(l_list[0]), int(l_list[1]), int(l_list[2]), int(l_list[3]), int(l_list[4]),
                                          int(l_list[5]))
                         self.data_list.append(data)
-
+            self.data_list.sort(key=attrgetter("frame"))
             print(f"Read data {data_path} , found {len(self.data_list)} lines")
         except IOError as e:
             print("Unable to read data: " + data_path)
             print(e)
 
     def get_data_by_time(self, time: int) -> List[VideoData]:
+
+        if not self.data_list:
+            return []
+
         now_sec = time / 1000
-        frame = round(now_sec * self.fps)
+        now_frame = round(now_sec * self.fps)
         result = []
-        for data in self.data_list:
-            if data.frame == frame:
-                result.append(data)
+        # wrong last_index
+        if self.last_index >= len(self.data_list):
+            self.last_index = 0
+
+        i = self.last_index
+
+        # make i to first same frame index
+        while self.data_list[i].frame < now_frame:
+            i += 1
+
+        self.last_index = i
+
+        while self.data_list[i].frame == now_frame:
+            result.append(self.data_list[i])
+            i += 1
 
         return result
 
