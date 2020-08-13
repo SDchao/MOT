@@ -56,7 +56,6 @@ class VideoDataCollection(object):
     def __init__(self, data_path: str, fps: float):
         self.fps = fps
         self.data_list = []
-
         self.last_index = 0
         try:
             with open(data_path, "r") as f:
@@ -86,16 +85,19 @@ class VideoDataCollection(object):
             self.last_index = 0
 
         i = self.last_index
-
-        # make i to first same frame index
-        while self.data_list[i].frame < now_frame:
+        found = False
+        while i < len(self.data_list):
+            if self.data_list[i].frame == now_frame:
+                if not found:
+                    self.last_index = i
+                    found = True
+                result.append(self.data_list[i])
+            elif self.data_list[i].frame > now_frame:
+                break
             i += 1
 
-        self.last_index = i
-
-        while self.data_list[i].frame == now_frame:
-            result.append(self.data_list[i])
-            i += 1
+        if not found:
+            self.last_index = 0
 
         return result
 

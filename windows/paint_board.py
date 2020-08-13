@@ -52,6 +52,8 @@ class PaintBoard(QWidget):
                 # painter.drawRect(1, 1, 157, 452)
 
     def read_data(self, video_path: str, fps: float):
+        if hasattr(self, "now_data_collection"):
+            del self.now_data_collection
         self.now_data_collection = video_operator.get_video_data(video_path, fps)
 
     def set_now_time(self, now_time: int):
