@@ -19,7 +19,7 @@ class MainWidget(QWidget):
         self.player = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         # 设置帧触发器
         self.player.positionChanged.connect(self.__on_position_changed)
-        self.player.setPlaybackRate(3)
+        # self.player.setPlaybackRate(3)
         self.player.setNotifyInterval(1000 / 30)
         self.play_list = QMediaPlaylist()
         # self.play_list.addMedia(QMediaContent(QUrl.fromLocalFile("windows/videos/default.mp4")))
