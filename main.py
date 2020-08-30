@@ -38,7 +38,7 @@ for camera_info in cameras_info:
             continue
         index = int(camera_info["mapPosIndex"])
         item = PreviewItem(video_info, map_poses[index])
-        main_widget.preview_list.insert_item(item)
+        main_widget.add_video(item)
 
 # Center Screen
 desktopRect = QApplication.desktop().availableGeometry(main_window)

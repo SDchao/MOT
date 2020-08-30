@@ -2,13 +2,14 @@ from PySide2.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QGridLayout,
                                QSizePolicy, QTableWidget, QTableWidgetItem,
                                QAbstractItemView, QLabel, QListWidgetItem)
 from PySide2.QtMultimedia import QMediaPlayer, QMediaPlaylist
-from PySide2.QtCore import QUrl, QFileInfo, QSize
+from PySide2.QtCore import QUrl, QFileInfo, QSize, QModelIndex
 from PySide2.QtGui import QPixmap, QMouseEvent
 from windows.preview_list_widget import PreviewListWidget
 from windows.paint_board import PaintBoard
 from windows.video_view import VideoGraphicsView
 from windows.preview_item import PreviewItem
 from windows.map_label import MapLabel
+from operators.convertor import get_absolute_qurl
 
 
 class MainWidget(QWidget):
@@ -19,12 +20,14 @@ class MainWidget(QWidget):
         self.player = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         # 设置帧触发器
         self.player.positionChanged.connect(self.__on_position_changed)
-        # self.player.setPlaybackRate(3)
+        self.player.setPlaybackRate(3)
         self.player.setNotifyInterval(1000 / 30)
         self.play_list = QMediaPlaylist()
         # self.play_list.addMedia(QMediaContent(QUrl.fromLocalFile("windows/videos/default.mp4")))
-        self.play_list.addMedia(QUrl.fromLocalFile(QFileInfo("windows/videos/default.mp4").absoluteFilePath()))
-        # self.play_list.setPlaybackMode(QMediaPlaylist.Loop)
+        # self.play_list.addMedia(QUrl.fromLocalFile(QFileInfo("windows/videos/default.mp4").absoluteFilePath()))
+        self.play_list.setPlaybackMode(QMediaPlaylist.Loop)
+        self.play_list.currentIndexChanged.connect(self.__current_index_changed)
+
         self.player.setPlaylist(self.play_list)
 
         # 左侧按钮
@@ -131,10 +134,23 @@ class MainWidget(QWidget):
         print(event.x(), event.y())
 
     def __change_video(self, path: str):
-        self.play_list.clear()
-        self.play_list.addMedia(QUrl.fromLocalFile(QFileInfo(path).absoluteFilePath()))
-        self.player.play()
-        print("Now playing: " + path)
+        qurl = get_absolute_qurl(path)
+        media_count = self.play_list.mediaCount()
+        found = False
+        for i in range(0, media_count):
+            if self.play_list.media(i) == qurl:
+                found = True
+                print("Now playing: " + path)
+                self.play_list.setCurrentIndex(i)
+                self.player.play()
+
+        if not found:
+            print(f"Cannot found media {path}")
+
+    def __current_index_changed(self, index: int):
+        self.preview_list.setCurrentRow(index)
+        self.preview_list.item(index).setSelected(True)
+        self.__on_list_item_activated(self.preview_list.item(index))
 
     def __on_list_item_activated(self, item: QListWidgetItem):
         if isinstance(item, PreviewItem):
@@ -144,3 +160,11 @@ class MainWidget(QWidget):
             self.paint_board.set_raw_size(item.video_size)
         else:
             print("Selected item is not a video preview!")
+
+    def add_video(self, item: PreviewItem):
+        self.__add_video_to_playlist(item.video_path)
+        self.preview_list.insert_item(item)
+
+    def __add_video_to_playlist(self, path: str):
+        qurl = get_absolute_qurl(path)
+        self.play_list.addMedia(qurl)
