@@ -24,7 +24,7 @@ class MainWidget(QWidget):
         self.play_list = QMediaPlaylist()
         # self.play_list.addMedia(QMediaContent(QUrl.fromLocalFile("windows/videos/default.mp4")))
         self.play_list.addMedia(QUrl.fromLocalFile(QFileInfo("windows/videos/default.mp4").absoluteFilePath()))
-        self.play_list.setPlaybackMode(QMediaPlaylist.Loop)
+        # self.play_list.setPlaybackMode(QMediaPlaylist.Loop)
         self.player.setPlaylist(self.play_list)
 
         # 左侧按钮
@@ -144,6 +144,3 @@ class MainWidget(QWidget):
             self.paint_board.set_raw_size(item.video_size)
         else:
             print("Selected item is not a video preview!")
-
-    def set_map(self, map_path: str):
-        self.map_label.set_map(QPixmap(map_path))

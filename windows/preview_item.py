@@ -2,6 +2,7 @@ from PySide2.QtWidgets import QListWidgetItem
 from PySide2.QtCore import QSize, QPoint
 from PySide2.QtGui import QIcon, QPixmap, QImage
 from operators.video_operator import VideoInfo
+from operators.convertor import str_2_point
 
 
 class PreviewItem(QListWidgetItem):
@@ -20,9 +21,7 @@ class PreviewItem(QListWidgetItem):
         self.setToolTip(video_info.name)
         self.video_path = video_info.path
         self.fps = video_info.fps
-        map_pos_list = map_pos.split(" ")
-        assert len(map_pos_list) == 2
-        self.map_pos = QPoint(int(map_pos_list[0]), int(map_pos_list[1]))
+        self.map_pos = str_2_point(map_pos)
         self.video_size = video_info.size
         if size_hint:
             self.setSizeHint(size_hint)
