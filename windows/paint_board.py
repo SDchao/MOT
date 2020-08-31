@@ -1,12 +1,16 @@
 from PySide2.QtWidgets import QWidget
 from PySide2.QtCore import Qt, QSize, QRect
-from PySide2.QtGui import QPainter, QPen, QFont, QFontMetrics
+from PySide2.QtGui import QPainter, QPen, QFont, QFontMetrics, QMouseEvent
+from typing import List
+
 from operators.video_operator import VideoDataCollection
 import operators.video_operator as video_operator
 
 
 class PaintBoard(QWidget):
     now_data_collection: VideoDataCollection
+    selecting_ids: list = []
+    showing_info: List[List] = []
     now_time: int = 0
     kw: float = 1
     kh: float = 1
@@ -27,7 +31,12 @@ class PaintBoard(QWidget):
 
         if hasattr(self, "now_data_collection"):
             data_list_in_frame = self.now_data_collection.get_data_by_time(self.now_time)
+            self.showing_info = []
             for data in data_list_in_frame:
+                if self.selecting_ids:
+                    if data.no not in self.selecting_ids:
+                        continue
+
                 color = self.color_list[(data.no - 1) % len(self.color_list)]
                 # 设置笔刷
                 pen.setColor(color)
@@ -37,16 +46,17 @@ class PaintBoard(QWidget):
                 painter.setPen(pen)
                 painter.setFont(self.font)
 
-                vertexes = [data.vertexes[0] * self.kw, data.vertexes[1] * self.kh, data.vertexes[2] * self.kw,
-                            data.vertexes[3] * self.kh]
+                show_rect = QRect(data.vertexes[0] * self.kw, data.vertexes[1] * self.kh, data.vertexes[2] * self.kw,
+                                  data.vertexes[3] * self.kh)
+                self.showing_info.append([show_rect, data.no])
 
-                painter.drawRect(vertexes[0], vertexes[1], vertexes[2], vertexes[3])
+                painter.drawRect(show_rect)
                 # text_point = [vertexes[0] + self.text_offset[0], vertexes[1] + self.text_offset[1]]
 
                 text_w = self.metrics.width(str(data.no))
                 text_h = self.metrics.height()
-                text_rect = QRect(vertexes[0], vertexes[1], text_w, text_h)
-                painter.fillRect(vertexes[0], vertexes[1], text_w, text_h, color)
+                text_rect = QRect(show_rect.x(), show_rect.y(), text_w, text_h)
+                painter.fillRect(show_rect.x(), show_rect.y(), text_w, text_h, color)
                 painter.setPen(Qt.white)
                 painter.drawText(text_rect, Qt.AlignCenter, str(data.no))
                 # painter.drawRect(1, 1, 157, 452)
@@ -62,3 +72,12 @@ class PaintBoard(QWidget):
     def set_raw_size(self, raw_size: QSize):
         self.kw = self.size().width() / raw_size.width()
         self.kh = self.size().height() / raw_size.height()
+
+    def on_click(self, event: QMouseEvent):
+        click_point = event.pos()
+        print(click_point.x(), click_point.y())
+        self.selecting_ids = []
+        for info in self.showing_info:
+            rect: QRect = info[0]
+            if rect.contains(click_point):
+                self.selecting_ids.append(info[1])

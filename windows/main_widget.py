@@ -20,7 +20,7 @@ class MainWidget(QWidget):
         self.player = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         # 设置帧触发器
         self.player.positionChanged.connect(self.__on_position_changed)
-        self.player.setPlaybackRate(3)
+        # self.player.setPlaybackRate(3)
         self.player.setNotifyInterval(1000 / 30)
         self.play_list = QMediaPlaylist()
         # self.play_list.addMedia(QMediaContent(QUrl.fromLocalFile("windows/videos/default.mp4")))
@@ -131,7 +131,7 @@ class MainWidget(QWidget):
             self.paint_board.update()
 
     def __on_video_mouse_press(self, event: QMouseEvent):
-        print(event.x(), event.y())
+        self.paint_board.on_click(event)
 
     def __change_video(self, path: str):
         qurl = get_absolute_qurl(path)
