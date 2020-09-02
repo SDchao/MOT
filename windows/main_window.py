@@ -6,7 +6,6 @@ import sys
 class MainWindow(QMainWindow):
     def __init__(self, widget):
         QMainWindow.__init__(self)
-
         self.setWindowTitle("MOT")
 
         # Menu

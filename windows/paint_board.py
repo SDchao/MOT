@@ -17,6 +17,7 @@ class PaintBoard(QWidget):
     text_offset = [30, 30]
     font = QFont("Microsoft YaHei", 12)
     metrics = QFontMetrics(font)
+    last_raw_size: QSize = None
 
     color_list = [Qt.red, Qt.blue, Qt.green, Qt.cyan, Qt.magenta]
 
@@ -70,14 +71,20 @@ class PaintBoard(QWidget):
         self.now_time = now_time
 
     def set_raw_size(self, raw_size: QSize):
+        self.last_raw_size = raw_size
         self.kw = self.size().width() / raw_size.width()
         self.kh = self.size().height() / raw_size.height()
 
+    def update_k(self):
+        if self.last_raw_size:
+            self.kw = self.size().width() / self.last_raw_size.width()
+            self.kh = self.size().height() / self.last_raw_size.height()
+
     def on_click(self, event: QMouseEvent):
         click_point = event.pos()
-        print(click_point.x(), click_point.y())
         self.selecting_ids = []
         for info in self.showing_info:
             rect: QRect = info[0]
             if rect.contains(click_point):
                 self.selecting_ids.append(info[1])
+                break

@@ -8,13 +8,13 @@ class MapLabel(QLabel):
     now_pos: QPoint = None
     aspect_ratio = 0.5
     raw_pixmap: QPixmap = None
-    all_pos: list = None
+    all_pos: list = []
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         self.setAlignment(Qt.AlignLeft | Qt.AlignTop)
-        self.setMinimumSize(500, 500)
+        self.setMinimumSize(400, 400)
 
     def resizeEvent(self, event: QResizeEvent):
         if self.raw_pixmap:
@@ -23,8 +23,10 @@ class MapLabel(QLabel):
     def set_map(self, map_path: QPixmap, all_pos: list = None) -> None:
         pixmap = QPixmap(map_path)
         self.raw_pixmap = pixmap
-        self.setPixmap(pixmap.scaled(self.width(), self.height(),
-                                     Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        new_pixmap = pixmap.scaled(self.width(), self.height(),
+                                   Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.setPixmap(new_pixmap)
+        self.setMinimumSize(new_pixmap.size())
         if all_pos:
             self.all_pos = []
             for pos in all_pos:

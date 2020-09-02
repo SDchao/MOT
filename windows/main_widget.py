@@ -1,9 +1,9 @@
 from PySide2.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QGridLayout,
                                QSizePolicy, QTableWidget, QTableWidgetItem,
-                               QAbstractItemView, QLabel, QListWidgetItem)
+                               QAbstractItemView, QStyle, QListWidgetItem)
 from PySide2.QtMultimedia import QMediaPlayer, QMediaPlaylist
-from PySide2.QtCore import QUrl, QFileInfo, QSize, QModelIndex
-from PySide2.QtGui import QPixmap, QMouseEvent
+from PySide2.QtGui import QPixmap, QMouseEvent, QResizeEvent
+from PySide2.QtCore import Qt
 from windows.preview_list_widget import PreviewListWidget
 from windows.paint_board import PaintBoard
 from windows.video_view import VideoGraphicsView
@@ -15,7 +15,6 @@ from operators.convertor import get_absolute_qurl
 class MainWidget(QWidget):
     def __init__(self):
         QWidget.__init__(self)
-
         # 播放器
         self.player = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         # 设置帧触发器
@@ -72,9 +71,12 @@ class MainWidget(QWidget):
         lay.addWidget(self.main_video_widget)
         """
         self.main_video_view = VideoGraphicsView(self.player, 1272, 720)
-        self.paint_board = PaintBoard()
-        self.paint_board.setFixedSize(self.main_video_view.size())
-        self.main_video_view.scene().addWidget(self.paint_board)
+
+        # 暂停按钮
+        self.pause_button = QPushButton()
+        self.pause_button.setIcon(self.style().standardIcon(QStyle.SP_MediaPause))
+        self.pause_button.clicked.connect(self.__on_pause_button_clicked)
+        self.pause_button.setMinimumWidth(100)
 
         self.main_video_view.mousePressEvent = self.__on_video_mouse_press
 
@@ -82,10 +84,9 @@ class MainWidget(QWidget):
         self.camera_table = QTableWidget(3, 5)
         self.camera_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.camera_table.setSelectionBehavior(QAbstractItemView.SelectItems)
+        self.camera_table.setMinimumWidth(400)
         self.camera_table.setHorizontalHeaderLabels(
             ["C1", "C2", "C3", "C4", "C5"])
-        self.camera_table.setSizePolicy(
-            QSizePolicy.Expanding, QSizePolicy.Fixed)
         count = 0
         for i in range(0, 3):
             for j in range(0, 5):
@@ -99,39 +100,44 @@ class MainWidget(QWidget):
         # 右下布局
         right_v_layout = QVBoxLayout()
         right_v_layout.setSpacing(10)
-        right_v_layout.setMargin(10)
-
-        right_v_layout.addWidget(self.camera_table)
-        right_v_layout.addWidget(self.map_label)
+        right_v_layout.addStretch(1)
+        right_v_layout.addWidget(self.camera_table, 0, Qt.AlignCenter)
+        right_v_layout.addStretch(1)
+        right_v_layout.addWidget(self.map_label, 0, Qt.AlignBottom | Qt.AlignHCenter)
+        right_v_layout.addStretch(1)
 
         # 窗口的底层Layout
         base_layout = QGridLayout()
         # 左侧功能按钮
-        base_layout.addLayout(left_v_layout, 0, 0, 2, 1)
+        base_layout.addLayout(left_v_layout, 0, 0, 3, 1)
         # 视频预览
         base_layout.addWidget(self.preview_list, 0, 1, 1, 2)
         # 主视频播放
-        base_layout.addWidget(self.main_video_view, 1, 1)
+        base_layout.addWidget(self.main_video_view, 1, 1, Qt.AlignCenter)
+        # 暂停按钮
+        base_layout.addWidget(self.pause_button, 2, 1, Qt.AlignCenter)
         # 右下状态
-        base_layout.addLayout(right_v_layout, 1, 2)
-        base_layout.setColumnStretch(0, 1)
-        base_layout.setColumnStretch(1, 5)
-        base_layout.setColumnStretch(2, 3)
-        base_layout.setColumnMinimumWidth(2, 500)
+        base_layout.addLayout(right_v_layout, 1, 2, 2, 1)
 
-        base_layout.setHorizontalSpacing(10)
-        base_layout.setVerticalSpacing(10)
+        base_layout.setColumnStretch(0, 1)
+        base_layout.setColumnStretch(1, 3)
+        base_layout.setColumnStretch(2, 1)
+
+        # base_layout.setRowStretch(0, 3)
+        # base_layout.setRowStretch(1, 5)
+        # base_layout.setRowStretch(2, 1)
+
+        base_layout.setColumnMinimumWidth(2, 500)
 
         self.setLayout(base_layout)
         self.player.play()
 
     def __on_position_changed(self, pos):
-        if hasattr(self, "paint_board"):
-            self.paint_board.set_now_time(pos)
-            self.paint_board.update()
+        self.main_video_view.paint_board.set_now_time(pos)
+        self.main_video_view.paint_board.update()
 
     def __on_video_mouse_press(self, event: QMouseEvent):
-        self.paint_board.on_click(event)
+        self.main_video_view.paint_board.on_click(event)
 
     def __change_video(self, path: str):
         qurl = get_absolute_qurl(path)
@@ -156,8 +162,8 @@ class MainWidget(QWidget):
         if isinstance(item, PreviewItem):
             self.__change_video(item.video_path)
             self.map_label.set_now_pos(item.map_pos)
-            self.paint_board.read_data(item.video_path, item.fps)
-            self.paint_board.set_raw_size(item.video_size)
+            self.main_video_view.paint_board.read_data(item.video_path, item.fps)
+            self.main_video_view.paint_board.set_raw_size(item.video_size)
         else:
             print("Selected item is not a video preview!")
 
@@ -168,3 +174,11 @@ class MainWidget(QWidget):
     def __add_video_to_playlist(self, path: str):
         qurl = get_absolute_qurl(path)
         self.play_list.addMedia(qurl)
+
+    def __on_pause_button_clicked(self):
+        if self.player.state() == QMediaPlayer.PlayingState:
+            self.player.pause()
+            self.pause_button.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
+        elif self.player.state() == QMediaPlayer.PausedState:
+            self.player.play()
+            self.pause_button.setIcon(self.style().standardIcon(QStyle.SP_MediaPause))
