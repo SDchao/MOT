@@ -10,6 +10,7 @@ from windows.video_view import VideoGraphicsView
 from windows.preview_item import PreviewItem
 from windows.map_label import MapLabel
 from operators.convertor import get_absolute_qurl
+from windows.track_widget import TrackWidget
 
 
 class MainWidget(QWidget):
@@ -81,7 +82,8 @@ class MainWidget(QWidget):
         self.main_video_view.mousePressEvent = self.__on_video_mouse_press
 
         # 右下轨迹图
-        self.track_view = QWidget()
+        self.track_view = TrackWidget(1272 / 3, 720 / 3, 1272, 720)
+        self.main_video_view.paint_board.track_widget = self.track_view
 
         # 右下地图
         self.map_label = MapLabel()
@@ -91,6 +93,7 @@ class MainWidget(QWidget):
         right_v_layout = QVBoxLayout()
         right_v_layout.setSpacing(10)
         right_v_layout.addStretch(1)
+        right_v_layout.addWidget(self.track_view, 0, Qt.AlignBottom | Qt.AlignHCenter)
         right_v_layout.addStretch(1)
         right_v_layout.addWidget(self.map_label, 0, Qt.AlignBottom | Qt.AlignHCenter)
         right_v_layout.addStretch(1)
@@ -139,6 +142,8 @@ class MainWidget(QWidget):
                 print("Now playing: " + path)
                 self.play_list.setCurrentIndex(i)
                 self.player.play()
+                self.track_view.clear()
+                self.main_video_view.paint_board.clear_select()
 
         if not found:
             print(f"Cannot found media {path}")
