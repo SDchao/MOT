@@ -80,18 +80,8 @@ class MainWidget(QWidget):
 
         self.main_video_view.mousePressEvent = self.__on_video_mouse_press
 
-        # 右下摄像机表格
-        self.camera_table = QTableWidget(3, 5)
-        self.camera_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.camera_table.setSelectionBehavior(QAbstractItemView.SelectItems)
-        self.camera_table.setMinimumWidth(400)
-        self.camera_table.setHorizontalHeaderLabels(
-            ["C1", "C2", "C3", "C4", "C5"])
-        count = 0
-        for i in range(0, 3):
-            for j in range(0, 5):
-                count += 1
-                self.camera_table.setItem(i, j, QTableWidgetItem(str(count)))
+        # 右下轨迹图
+        self.track_view = QWidget()
 
         # 右下地图
         self.map_label = MapLabel()
@@ -101,7 +91,6 @@ class MainWidget(QWidget):
         right_v_layout = QVBoxLayout()
         right_v_layout.setSpacing(10)
         right_v_layout.addStretch(1)
-        right_v_layout.addWidget(self.camera_table, 0, Qt.AlignCenter)
         right_v_layout.addStretch(1)
         right_v_layout.addWidget(self.map_label, 0, Qt.AlignBottom | Qt.AlignHCenter)
         right_v_layout.addStretch(1)
@@ -138,6 +127,7 @@ class MainWidget(QWidget):
 
     def __on_video_mouse_press(self, event: QMouseEvent):
         self.main_video_view.paint_board.on_click(event)
+        self.main_video_view.paint_board.update()
 
     def __change_video(self, path: str):
         qurl = get_absolute_qurl(path)

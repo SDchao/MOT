@@ -3,7 +3,7 @@ from PySide2.QtCore import Qt, QSize, QRect
 from PySide2.QtGui import QPainter, QPen, QFont, QFontMetrics, QMouseEvent
 from typing import List
 
-from operators.video_operator import VideoDataCollection
+from operators.video_operator import VideoDataCollection, VideoData
 import operators.video_operator as video_operator
 
 
@@ -19,7 +19,7 @@ class PaintBoard(QWidget):
     metrics = QFontMetrics(font)
     last_raw_size: QSize = None
 
-    color_list = [Qt.red, Qt.blue, Qt.green, Qt.cyan, Qt.magenta]
+    color_list = [Qt.red, Qt.green, Qt.blue, Qt.cyan, Qt.magenta]
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
@@ -34,9 +34,13 @@ class PaintBoard(QWidget):
             data_list_in_frame = self.now_data_collection.get_data_by_time(self.now_time)
             self.showing_info = []
             for data in data_list_in_frame:
-                if self.selecting_ids:
-                    if data.no not in self.selecting_ids:
-                        continue
+                show_rect = QRect(data.vertexes[0] * self.kw, data.vertexes[1] * self.kh, data.vertexes[2] * self.kw,
+                                  data.vertexes[3] * self.kh)
+                self.showing_info.append([show_rect, data.no])
+
+                # 若不在选定ID中则不再绘制
+                if data.no not in self.selecting_ids:
+                    continue
 
                 color = self.color_list[(data.no - 1) % len(self.color_list)]
                 # 设置笔刷
@@ -46,10 +50,6 @@ class PaintBoard(QWidget):
 
                 painter.setPen(pen)
                 painter.setFont(self.font)
-
-                show_rect = QRect(data.vertexes[0] * self.kw, data.vertexes[1] * self.kh, data.vertexes[2] * self.kw,
-                                  data.vertexes[3] * self.kh)
-                self.showing_info.append([show_rect, data.no])
 
                 painter.drawRect(show_rect)
                 # text_point = [vertexes[0] + self.text_offset[0], vertexes[1] + self.text_offset[1]]
