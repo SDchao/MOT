@@ -3,8 +3,9 @@ from PySide2.QtGui import QImage
 from PySide2.QtCore import QSize
 import os
 
-from typing import List
+from typing import List, Union
 from operator import attrgetter
+from operators.convertor import cv_frame_2_qimage
 
 
 class VideoInfo(object):
@@ -51,14 +52,17 @@ vertexes: {self.vertexes}"""
 
 class VideoDataCollection(object):
     data_list: List[VideoData] = []
+    ws_list: Union[List] = []
     fps: float
 
-    def __init__(self, data_path: str, fps: float):
+    def __init__(self, data_path: str, ws_path: str, fps: float):
         self.fps = fps
         self.data_list = []
+        self.ws_list = []
         self.last_index = 0
+        # 读取data
         try:
-            with open(data_path, "r") as f:
+            with open(data_path, "r", encoding="utf8") as f:
                 for line in f:
                     line = line.strip()
                     l_list = line.split(",")
@@ -66,11 +70,38 @@ class VideoDataCollection(object):
                         data = VideoData(int(l_list[0]), int(l_list[1]), int(l_list[2]), int(l_list[3]), int(l_list[4]),
                                          int(l_list[5]))
                         self.data_list.append(data)
+                    else:
+                        print(f"Invalid data in {data_path}: {line}")
             self.data_list.sort(key=attrgetter("frame"))
             print(f"Read data {data_path} , found {len(self.data_list)} lines")
         except IOError as e:
             print("Unable to read data: " + data_path)
             print(e)
+        # 读取ws
+        try:
+            with open(ws_path, "r", encoding="utf8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line[0] == "#":
+                        continue
+
+                    l_list = line.split("<-")
+                    if len(l_list) == 2:
+                        self.ws_list.append([int(l_list[0]), int(l_list[1])])
+                    else:
+                        print(f"Invalid data in {ws_path}: {line}")
+
+                print(f"Read ws {ws_path} , found {len(self.ws_list)} lines")
+        except IOError as e:
+            print("Unable to read ws: " + ws_path)
+            print(e)
+
+    def get_ws_id_list(self, target_id: int) -> List[int]:
+        for ws_info in self.ws_list:
+            if target_id in ws_info:
+                return ws_info
+
+        return []
 
     def get_data_by_time(self, time: int) -> List[VideoData]:
 
@@ -111,11 +142,12 @@ def get_video_info(video_path: str) -> VideoInfo:
     size = QSize(cap.get(cv2.CAP_PROP_FRAME_WIDTH), cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     fps = cap.get(cv2.CAP_PROP_FPS)
     cap.release()
-    q_image = QImage(frame, size.width(), size.height(), 3 * size.width(),
-                     QImage.Format_RGB888).rgbSwapped()
+    q_image = cv_frame_2_qimage(frame, size)
     return VideoInfo(True, q_image, size, name, fps, video_path)
 
 
 def get_video_data(video_path: str, fps: float) -> VideoDataCollection:
-    data_path = os.path.splitext(video_path)[0] + ".data"
-    return VideoDataCollection(data_path, fps)
+    head_path = os.path.splitext(video_path)[0]
+    data_path = head_path + ".data"
+    ws_path = head_path + ".ws"
+    return VideoDataCollection(data_path, ws_path, fps)

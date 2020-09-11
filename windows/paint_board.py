@@ -1,7 +1,7 @@
 from PySide2.QtWidgets import QWidget
-from PySide2.QtCore import Qt, QSize, QRect
+from PySide2.QtCore import Qt, QSize, QRect, QPoint
 from PySide2.QtGui import QPainter, QPen, QFont, QFontMetrics, QMouseEvent
-from typing import List
+from typing import List, Dict
 
 from operators.video_operator import VideoDataCollection, VideoData
 import operators.video_operator as video_operator
@@ -22,7 +22,7 @@ class PaintBoard(QWidget):
     last_raw_size: QSize = None
     track_widget: TrackWidget = None
 
-    color_list = [Qt.red, Qt.green, Qt.blue, Qt.cyan, Qt.magenta]
+    color_list = [Qt.green, Qt.red, Qt.blue, Qt.cyan, Qt.magenta]
 
     def __init__(self, parent=None, track_view=None):
         QWidget.__init__(self, parent)
@@ -48,7 +48,7 @@ class PaintBoard(QWidget):
                     continue
 
                 self.showing_info.append([show_rect, data.no])
-                color = self.color_list[(len(self.showing_info) - 1) % len(self.color_list)]
+                color = self.color_list[self.selecting_ids.index(data.no) % len(self.color_list)]
                 # 设置笔刷
                 pen.setColor(color)
                 pen.setWidth(3)
@@ -67,16 +67,13 @@ class PaintBoard(QWidget):
                 painter.setPen(Qt.white)
                 painter.drawText(text_rect, Qt.AlignCenter, str(data.no))
                 # painter.drawRect(1, 1, 157, 452)
-
         if self.track_widget:
-            if self.now_info:
-                points = []
-                print(len(self.now_info))
-                for info in self.showing_info:
-                    rect: QRect = info[0]
-                    points.append(rect.center())
+            points: Dict[int, QPoint] = {}
+            for info in self.showing_info:
+                rect: QRect = info[0]
+                points[info[1]] = rect.center()
 
-                self.track_widget.add_points(points)
+            self.track_widget.add_points(points)
 
     def read_data(self, video_path: str, fps: float):
         if hasattr(self, "now_data_collection"):
@@ -106,5 +103,11 @@ class PaintBoard(QWidget):
         for info in self.now_info:
             rect: QRect = info[0]
             if rect.contains(click_point):
-                self.selecting_ids.append(info[1])
+                target_id = info[1]
+                ws_list = self.now_data_collection.get_ws_id_list(target_id)
+                if ws_list:
+                    for id in ws_list:
+                        self.selecting_ids.append(id)
+                else:
+                    self.selecting_ids.append(target_id)
                 break

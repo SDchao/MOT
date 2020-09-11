@@ -1,12 +1,13 @@
 from PySide2.QtWidgets import QWidget
 from PySide2.QtCore import Qt, QPoint
 from PySide2.QtGui import QPalette, QPaintEvent, QPen, QPainter
-from typing import List
+from typing import List, Dict
 
 
 class TrackWidget(QWidget):
-    track_points = []
-    final_points = []
+    track_points: Dict[int, List] = {}
+    final_points: Dict[int, QPoint] = {}
+    colors = [Qt.green, Qt.red, Qt.darkYellow, Qt.blue]
 
     kw = 1
     kh = 1
@@ -19,7 +20,7 @@ class TrackWidget(QWidget):
         self.kh = h / raw_h
 
         pal = QPalette()
-        pal.setColor(QPalette.Background, Qt.darkBlue)
+        pal.setColor(QPalette.Background, Qt.blue)
         self.setAutoFillBackground(True)
         self.setPalette(pal)
 
@@ -27,39 +28,45 @@ class TrackWidget(QWidget):
         super(TrackWidget, self).paintEvent(event)
         painter = QPainter(self)
         pen = QPen()
-        pen.setWidth(5)
-        pen.setColor(Qt.yellow)
+        pen.setWidth(10)
         pen.setCapStyle(Qt.RoundCap)
-        painter.setPen(pen)
 
-        last_point: QPoint = None
-        for point in self.track_points:
-            if last_point:
-                painter.drawLine(last_point, point)
-            else:
-                painter.drawPoint(point)
-            last_point = point
-
+        index = 0
+        for key in self.track_points.keys():
+            last_point = None
+            color = self.colors[index % len(self.colors)]
+            pen.setColor(color)
+            painter.setPen(pen)
+            for point in self.track_points[key]:
+                if last_point:
+                    painter.drawLine(last_point, point)
+                else:
+                    painter.drawPoint(point)
+                last_point = point
+            index += 1
         pen.setColor(Qt.red)
         pen.setWidth(20)
         painter.setPen(pen)
 
-        for point in self.final_points:
+        for point in self.final_points.values():
             painter.drawPoint(point)
 
-    def add_points(self, point_list: List[QPoint]):
-        for old_final_point in self.final_points:
-            self.track_points.append(old_final_point)
+    def add_points(self, point_dict: Dict[int, QPoint]):
+        for (key, point) in self.final_points.items():
+            if key in self.track_points.keys():
+                self.track_points[key].append(point)
+            else:
+                self.track_points[key] = [point]
 
-        self.final_points = []
+        self.final_points = {}
 
-        for new_final_point in point_list:
-            new_final_point.setX(new_final_point.x() * self.kw)
-            new_final_point.setY(new_final_point.y() * self.kh)
-            self.final_points.append(new_final_point)
+        for (key, new_point) in point_dict.items():
+            new_point.setX(new_point.x() * self.kw)
+            new_point.setY(new_point.y() * self.kh)
+            self.final_points[key] = new_point
 
         self.update()
 
     def clear(self):
-        self.track_points = []
-        self.final_points = []
+        self.track_points = {}
+        self.final_points = {}

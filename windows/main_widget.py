@@ -91,12 +91,8 @@ class MainWidget(QWidget):
 
         # 右下布局
         right_v_layout = QVBoxLayout()
-        right_v_layout.setSpacing(10)
-        right_v_layout.addStretch(1)
-        right_v_layout.addWidget(self.track_view, 0, Qt.AlignBottom | Qt.AlignHCenter)
-        right_v_layout.addStretch(1)
-        right_v_layout.addWidget(self.map_label, 0, Qt.AlignBottom | Qt.AlignHCenter)
-        right_v_layout.addStretch(1)
+        right_v_layout.addWidget(self.track_view, 0, Qt.AlignCenter)
+        right_v_layout.addWidget(self.map_label, 0, Qt.AlignCenter)
 
         # 窗口的底层Layout
         base_layout = QGridLayout()
@@ -119,7 +115,7 @@ class MainWidget(QWidget):
         # base_layout.setRowStretch(1, 5)
         # base_layout.setRowStretch(2, 1)
 
-        base_layout.setColumnMinimumWidth(2, 500)
+        base_layout.setColumnMinimumWidth(2, 400)
 
         self.setLayout(base_layout)
         self.player.play()
@@ -132,35 +128,27 @@ class MainWidget(QWidget):
         self.main_video_view.paint_board.on_click(event)
         self.main_video_view.paint_board.update()
 
-    def __change_video(self, path: str):
-        qurl = get_absolute_qurl(path)
-        media_count = self.play_list.mediaCount()
-        found = False
-        for i in range(0, media_count):
-            if self.play_list.media(i) == qurl:
-                found = True
-                print("Now playing: " + path)
-                self.play_list.setCurrentIndex(i)
-                self.player.play()
-                self.track_view.clear()
-                self.main_video_view.paint_board.clear_select()
+    def __change_video(self, new_index: int):
+        print(f"Now playing index {new_index}")
+        self.play_list.setCurrentIndex(new_index)
 
-        if not found:
-            print(f"Cannot found media {path}")
+    def __change_video_data(self, item: PreviewItem):
+        self.map_label.set_now_pos(item.map_pos)
+        self.main_video_view.paint_board.read_data(item.video_path, item.fps)
+        self.main_video_view.paint_board.set_raw_size(item.video_size)
 
     def __current_index_changed(self, index: int):
         self.preview_list.setCurrentRow(index)
         self.preview_list.item(index).setSelected(True)
-        self.__on_list_item_activated(self.preview_list.item(index))
+        self.player.play()
+        self.track_view.clear()
+        self.main_video_view.paint_board.clear_select()
+        self.track_view.clear()
+        self.__change_video_data(self.preview_list.item(index))
 
     def __on_list_item_activated(self, item: QListWidgetItem):
         if isinstance(item, PreviewItem):
-            self.__change_video(item.video_path)
-            self.map_label.set_now_pos(item.map_pos)
-            self.main_video_view.paint_board.read_data(item.video_path, item.fps)
-            self.main_video_view.paint_board.set_raw_size(item.video_size)
-        else:
-            print("Selected item is not a video preview!")
+            self.__change_video(self.preview_list.currentIndex().row())
 
     def add_video(self, item: PreviewItem):
         self.__add_video_to_playlist(item.video_path)

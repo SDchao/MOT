@@ -1,4 +1,5 @@
-from PySide2.QtCore import QPoint, QUrl, QFileInfo
+from PySide2.QtCore import QPoint, QUrl, QFileInfo, QSize
+from PySide2.QtGui import QImage
 
 
 def str_2_point(pos: str) -> QPoint:
@@ -9,3 +10,8 @@ def str_2_point(pos: str) -> QPoint:
 
 def get_absolute_qurl(path: str) -> QUrl:
     return QUrl.fromLocalFile(QFileInfo(path).absoluteFilePath())
+
+
+def cv_frame_2_qimage(frame, size: QSize) -> QImage:
+    return QImage(frame, size.width(), size.height(), 3 * size.width(),
+                  QImage.Format_RGB888).rgbSwapped()
