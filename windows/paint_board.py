@@ -4,12 +4,14 @@ from PySide2.QtGui import QPainter, QPen, QFont, QFontMetrics, QMouseEvent
 from typing import List, Dict
 
 from operators.video_operator import VideoDataCollection, VideoData
+from operators.reid_operator import ReidContainer
 import operators.video_operator as video_operator
 from windows.track_widget import TrackWidget
 
 
 class PaintBoard(QWidget):
     now_data_collection: VideoDataCollection
+    reid_container: ReidContainer = None
     selecting_ids: list = []
     now_info: List[List] = []
     showing_info: List = []
@@ -93,21 +95,34 @@ class PaintBoard(QWidget):
             self.kw = self.size().width() / self.last_raw_size.width()
             self.kh = self.size().height() / self.last_raw_size.height()
 
-    def clear_select(self):
+    def renew_select(self, last_index: int, new_index: int):
+        if self.selecting_ids:
+            now_id = self.selecting_ids[0]
+            if self.reid_container:
+                new_id = self.reid_container.get_reid(last_index, now_id, new_index)
+                if new_id > 0:
+                    self.__set_id(new_id)
+                    print(f"Reid {now_id} -> {new_id}")
+                else:
+                    self.selecting_ids = []
+
+    def __set_id(self, target_id: int):
         self.selecting_ids = []
+        ws_list = self.now_data_collection.get_ws_id_list(target_id)
+        if ws_list:
+            for new_id in ws_list:
+                self.selecting_ids.append(new_id)
+        else:
+            self.selecting_ids.append(target_id)
 
     def on_click(self, event: QMouseEvent):
         click_point = event.pos()
-        self.clear_select()
         self.track_widget.clear()
         for info in self.now_info:
             rect: QRect = info[0]
             if rect.contains(click_point):
                 target_id = info[1]
-                ws_list = self.now_data_collection.get_ws_id_list(target_id)
-                if ws_list:
-                    for id in ws_list:
-                        self.selecting_ids.append(id)
-                else:
-                    self.selecting_ids.append(target_id)
-                break
+                self.__set_id(target_id)
+                return
+
+        self.selecting_ids = []

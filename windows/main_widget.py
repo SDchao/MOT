@@ -10,10 +10,13 @@ from windows.video_view import VideoGraphicsView
 from windows.preview_item import PreviewItem
 from windows.map_label import MapLabel
 from operators.convertor import get_absolute_qurl
+from operators.reid_operator import ReidContainer
 from windows.track_widget import TrackWidget
 
 
 class MainWidget(QWidget):
+    last_index: int = -1
+
     def __init__(self):
         QWidget.__init__(self)
         # 播放器
@@ -120,6 +123,10 @@ class MainWidget(QWidget):
         self.setLayout(base_layout)
         self.player.play()
 
+    def set_reid_container(self, c: ReidContainer):
+        self.main_video_view.paint_board.reid_container = c
+        print(f"Set reid container, record {len(c.info)}")
+
     def __on_position_changed(self, pos):
         self.main_video_view.paint_board.set_now_time(pos)
         self.main_video_view.paint_board.update()
@@ -140,11 +147,14 @@ class MainWidget(QWidget):
     def __current_index_changed(self, index: int):
         self.preview_list.setCurrentRow(index)
         self.preview_list.item(index).setSelected(True)
+
         self.player.play()
-        self.track_view.clear()
-        self.main_video_view.paint_board.clear_select()
-        self.track_view.clear()
+
         self.__change_video_data(self.preview_list.item(index))
+        self.main_video_view.paint_board.renew_select(self.last_index, index)
+        self.track_view.clear()
+
+        self.last_index = index
 
     def __on_list_item_activated(self, item: QListWidgetItem):
         if isinstance(item, PreviewItem):
