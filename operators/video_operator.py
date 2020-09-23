@@ -1,6 +1,6 @@
 import cv2
 from PySide2.QtGui import QImage
-from PySide2.QtCore import QSize
+from PySide2.QtCore import QSize, QRect
 import os
 
 from typing import List, Union
@@ -151,3 +151,16 @@ def get_video_data(video_path: str, fps: float) -> VideoDataCollection:
     data_path = head_path + ".data"
     ws_path = head_path + ".ws"
     return VideoDataCollection(data_path, ws_path, fps)
+
+
+def get_video_shot(video_path: str, pos: int, rect: QRect) -> Union[None, QImage]:
+    cap = cv2.VideoCapture(video_path)
+    cap.set(cv2.CAP_PROP_POS_FRAMES, pos)
+    success, frame = cap.read()
+    if not success:
+        return None
+    size = QSize(rect.width(), rect.height())
+    cropped = frame[rect.y():rect.y() + rect.height(), rect.x():rect.x() + rect.width()]
+    cropped = cropped.copy(order="C")
+    qimage = cv_frame_2_qimage(cropped, size)
+    return qimage
