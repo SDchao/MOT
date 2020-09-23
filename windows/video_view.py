@@ -6,7 +6,7 @@ from windows.paint_board import PaintBoard
 
 
 class VideoGraphicsView(QGraphicsView):
-    def __init__(self, player, w, h):
+    def __init__(self, player, w, h, init_show_all=False):
         QGraphicsView.__init__(self)
         self.video_scene = QGraphicsScene()
         self.video_item = QGraphicsVideoItem()
@@ -22,6 +22,6 @@ class VideoGraphicsView(QGraphicsView):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
-        self.paint_board = PaintBoard()
+        self.paint_board = PaintBoard(None, None, init_show_all)
         self.paint_board.setFixedSize(w, h)
         self.scene().addWidget(self.paint_board)

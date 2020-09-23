@@ -23,14 +23,16 @@ class PaintBoard(QWidget):
     metrics = QFontMetrics(font)
     last_raw_size: QSize = None
     track_widget: TrackWidget = None
+    init_show_all: bool = False
 
     color_list = [Qt.green, Qt.red, Qt.blue, Qt.cyan, Qt.magenta]
 
-    def __init__(self, parent=None, track_view=None):
+    def __init__(self, parent=None, track_view=None, init_show_all=False):
         QWidget.__init__(self, parent)
         self.setAttribute(Qt.WA_TranslucentBackground, True)
         self.setPalette(Qt.transparent)
         self.track_widget = track_view
+        self.init_show_all = init_show_all
 
     def paintEvent(self, e):
         painter = QPainter(self)
@@ -47,10 +49,15 @@ class PaintBoard(QWidget):
 
                 # 若不在选定ID中则不再绘制
                 if data.no not in self.selecting_ids:
-                    continue
+                    # 若Select ID不为空或未规定空时显示全部
+                    if self.selecting_ids or not self.init_show_all:
+                        continue
 
                 self.showing_info.append([show_rect, data.no])
-                color = self.color_list[self.selecting_ids.index(data.no) % len(self.color_list)]
+                if data.no in self.selecting_ids:
+                    color = self.color_list[self.selecting_ids.index(data.no) % len(self.color_list)]
+                else:
+                    color = self.color_list[data.no % len(self.color_list)]
                 # 设置笔刷
                 pen.setColor(color)
                 pen.setWidth(3)
@@ -105,6 +112,8 @@ class PaintBoard(QWidget):
                     print(f"Reid {now_id} -> {new_id}")
                 else:
                     self.selecting_ids = []
+            else:
+                self.selecting_ids = []
 
     def __set_id(self, target_id: int):
         self.selecting_ids = []
@@ -117,7 +126,8 @@ class PaintBoard(QWidget):
 
     def on_click(self, event: QMouseEvent):
         click_point = event.pos()
-        self.track_widget.clear()
+        if self.track_widget:
+            self.track_widget.clear()
         for info in self.now_info:
             rect: QRect = info[0]
             if rect.contains(click_point):
