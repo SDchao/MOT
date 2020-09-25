@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QMainWindow, QAction
+from PySide2.QtWidgets import QMainWindow, QAction, QApplication
 from PySide2.QtCore import Slot
 import sys
 
@@ -29,6 +29,17 @@ class MainWindow(QMainWindow):
         self.status.showMessage("准备就绪")
 
         self.setCentralWidget(widget)
+        self.adjustSize()
+
+    def center_screen(self):
+        desktop_rect = QApplication.primaryScreen().geometry()
+        center = desktop_rect.center()
+        self.move(center.x() - self.width() * 0.5,
+                  center.y() - self.height() * 0.5)
+
+    def adjustSize(self):
+        super(MainWindow, self).adjustSize()
+        self.center_screen()
 
     @Slot()
     def exit_app(self):

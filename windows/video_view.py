@@ -6,6 +6,8 @@ from windows.paint_board import PaintBoard
 
 
 class VideoGraphicsView(QGraphicsView):
+    paint_board: PaintBoard = None
+
     def __init__(self, player, w, h, init_show_all=False):
         QGraphicsView.__init__(self)
         self.video_scene = QGraphicsScene()

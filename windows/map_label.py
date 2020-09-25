@@ -16,6 +16,8 @@ class MapLabel(QLabel):
         self.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.setMinimumSize(400, 400)
 
+        self.setObjectName("MapLabel")
+
     def resizeEvent(self, event: QResizeEvent):
         if self.raw_pixmap:
             self.set_map(self.raw_pixmap)

@@ -26,4 +26,4 @@ class PreviewItem(QListWidgetItem):
         if size_hint:
             self.setSizeHint(size_hint)
         else:
-            self.setSizeHint(QSize(300, 150))
+            self.setSizeHint(QSize(250, 150))

@@ -8,6 +8,7 @@ class TrackWidget(QWidget):
     track_points: Dict[int, List] = {}
     final_points: Dict[int, QPoint] = {}
     colors = [Qt.green, Qt.red, Qt.darkYellow, Qt.blue]
+    background_color = Qt.blue
 
     kw = 1
     kh = 1
@@ -19,19 +20,27 @@ class TrackWidget(QWidget):
         self.kw = w / raw_w
         self.kh = h / raw_h
 
-        pal = QPalette()
-        pal.setColor(QPalette.Background, Qt.blue)
+        # pal = QPalette()
+        # pal.setColor(QPalette.Background, Qt.blue)
         self.setAutoFillBackground(True)
-        self.setPalette(pal)
+        # self.setPalette(pal)
+
+        self.setObjectName("TrackWidget")
 
     def paintEvent(self, event: QPaintEvent):
         super(TrackWidget, self).paintEvent(event)
         painter = QPainter(self)
         pen = QPen()
-        pen.setWidth(10)
+        pen.setWidth(3)
         pen.setCapStyle(Qt.RoundCap)
 
+        pen.setColor(Qt.white)
+        painter.setPen(pen)
+        painter.fillRect(0, 0, self.width(), self.height(), self.background_color)
+        painter.drawRect(0, 0, self.width() - 3, self.height() - 3)
+
         index = 0
+        pen.setWidth(10)
         for key in self.track_points.keys():
             last_point = None
             color = self.colors[index % len(self.colors)]

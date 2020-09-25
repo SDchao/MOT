@@ -16,9 +16,15 @@ from windows.track_widget import TrackWidget
 
 class MainWidget(QWidget):
     last_index: int = -1
+    screenw: int = 0
+    screenh: int = 0
 
-    def __init__(self):
+    def __init__(self, screenw: int, screenh: int):
         QWidget.__init__(self)
+        self.screenw = screenw
+        self.screenh = screenh
+
+        self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         # 播放器
         self.player = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         # 设置帧触发器
@@ -34,12 +40,15 @@ class MainWidget(QWidget):
         self.player.setPlaylist(self.play_list)
 
         # 左侧按钮
-        self.button_select_face = QPushButton("选择人脸输入")
-        self.button_open_mot = QPushButton("打开MOT")
-        self.button_open_ReID = QPushButton("打开ReID")
+        self.button_open_main = QPushButton("主界面")
+        self.button_open_mot = QPushButton("MOT")
+        self.button_open_ReID = QPushButton("ReID")
+
+        self.button_open_main.clicked.connect(self.__on_button_open_main_clicked)
+        self.button_open_mot.clicked.connect(self.__on_button_open_mot_clicked)
 
         left_button_group = (
-            self.button_select_face, self.button_open_mot, self.button_open_ReID)
+            self.button_open_main, self.button_open_mot, self.button_open_ReID)
 
         for button in left_button_group:
             button.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
@@ -55,7 +64,7 @@ class MainWidget(QWidget):
 
         # 视频预览列表
         self.preview_list = PreviewListWidget()
-        self.preview_list.itemActivated.connect(self.__on_list_item_activated)
+        self.preview_list.itemPressed.connect(self.__on_list_item_pressed)
 
         # 视频窗口
         """
@@ -85,7 +94,7 @@ class MainWidget(QWidget):
         self.main_video_view.mousePressEvent = self.__on_video_mouse_press
 
         # 右下轨迹图
-        self.track_view = TrackWidget(1272 / 3, 720 / 3, 1272, 720)
+        self.track_view = TrackWidget(screenw * 0.2, screenh * 0.2, 1272, 720)
         self.main_video_view.paint_board.track_widget = self.track_view
 
         # 右下地图
@@ -98,29 +107,26 @@ class MainWidget(QWidget):
         right_v_layout.addWidget(self.map_label, 0, Qt.AlignCenter)
 
         # 窗口的底层Layout
-        base_layout = QGridLayout()
+        self.main_layout = QGridLayout()
         # 左侧功能按钮
-        base_layout.addLayout(left_v_layout, 0, 0, 3, 1)
+        self.main_layout.addLayout(left_v_layout, 0, 0, 3, 1)
         # 视频预览
-        base_layout.addWidget(self.preview_list, 0, 1, 1, 2)
+        self.main_layout.addWidget(self.preview_list, 0, 1, 1, 2)
         # 主视频播放
-        base_layout.addWidget(self.main_video_view, 1, 1, Qt.AlignCenter)
+        self.main_layout.addWidget(self.main_video_view, 1, 1, Qt.AlignCenter)
         # 暂停按钮
-        base_layout.addWidget(self.pause_button, 2, 1, Qt.AlignCenter)
-        # 右下状态
-        base_layout.addLayout(right_v_layout, 1, 2, 2, 1)
+        self.main_layout.addWidget(self.pause_button, 2, 1, Qt.AlignCenter)
+        # 右侧状态
+        self.main_layout.addLayout(right_v_layout, 1, 2, 2, 1)
 
-        base_layout.setColumnStretch(0, 1)
-        base_layout.setColumnStretch(1, 3)
-        base_layout.setColumnStretch(2, 1)
+        # 设置宽度
+        self.main_layout.setColumnStretch(0, 1)
+        self.main_layout.setColumnStretch(1, 3)
+        self.main_layout.setColumnStretch(2, 1)
 
-        # base_layout.setRowStretch(0, 3)
-        # base_layout.setRowStretch(1, 5)
-        # base_layout.setRowStretch(2, 1)
+        self.main_layout.setColumnMinimumWidth(2, self.screenw * 0.2)
 
-        base_layout.setColumnMinimumWidth(2, 400)
-
-        self.setLayout(base_layout)
+        self.setLayout(self.main_layout)
         self.player.play()
 
     def set_reid_container(self, c: ReidContainer):
@@ -156,7 +162,7 @@ class MainWidget(QWidget):
 
         self.last_index = index
 
-    def __on_list_item_activated(self, item: QListWidgetItem):
+    def __on_list_item_pressed(self, item: QListWidgetItem):
         if isinstance(item, PreviewItem):
             self.__change_video(self.preview_list.currentIndex().row())
 
@@ -175,3 +181,27 @@ class MainWidget(QWidget):
         elif self.player.state() == QMediaPlayer.PausedState:
             self.player.play()
             self.pause_button.setIcon(self.style().standardIcon(QStyle.SP_MediaPause))
+
+    def __on_button_open_mot_clicked(self):
+        print("Switching MOT layout")
+        self.track_view.hide()
+        self.map_label.hide()
+        self.main_layout.setColumnMinimumWidth(2, 0)
+        self.adjustSize()
+
+    def __on_button_open_main_clicked(self):
+        print("Switching Main layout")
+        self.track_view.show()
+        self.map_label.show()
+        # 设置宽度
+        self.main_layout.setColumnStretch(0, 1)
+        self.main_layout.setColumnStretch(1, 3)
+        self.main_layout.setColumnStretch(2, 1)
+
+        self.main_layout.setColumnMinimumWidth(2, self.screenw * 0.2)
+
+        self.adjustSize()
+
+    def adjustSize(self):
+        super().adjustSize()
+        self.window().adjustSize()

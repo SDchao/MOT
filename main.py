@@ -9,10 +9,12 @@ from windows.preview_item import PreviewItem
 
 app = QApplication(sys.argv)
 
-main_widget = MainWidget()
+desktopRect = QApplication.primaryScreen().geometry()
+
+main_widget = MainWidget(desktopRect.width(), desktopRect.height())
 main_window = MainWindow(main_widget)
 
-# app.setStyleSheet(open("windows/qss/MainStyle.qss", "r").read())
+app.setStyleSheet(open("windows/qss/MainStyle.qss", "r").read())
 
 main_window.show()
 
@@ -35,11 +37,5 @@ for camera_info in cameras_info:
         index = int(camera_info["mapPosIndex"])
         item = PreviewItem(video_info, map_poses[index])
         main_widget.add_video(item)
-
-# Center Screen
-desktopRect = QApplication.desktop().availableGeometry(main_window)
-center = desktopRect.center()
-main_window.move(center.x() - main_window.width() * 0.5,
-                 center.y() - main_window.height() * 0.5)
 
 sys.exit(app.exec_())
