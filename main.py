@@ -38,4 +38,6 @@ for camera_info in cameras_info:
         item = PreviewItem(video_info, map_poses[index])
         main_widget.add_video(item)
 
+main_window.adjustSize()
+
 sys.exit(app.exec_())

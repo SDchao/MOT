@@ -126,6 +126,8 @@ class MainWidget(QWidget):
 
         self.main_layout.setColumnMinimumWidth(2, self.screenw * 0.2)
 
+        self.button_open_main.setDisabled(True)
+
         self.setLayout(self.main_layout)
         self.player.play()
 
@@ -187,6 +189,12 @@ class MainWidget(QWidget):
         self.track_view.hide()
         self.map_label.hide()
         self.main_layout.setColumnMinimumWidth(2, 0)
+        self.button_open_main.setDisabled(False)
+        self.button_open_mot.setDisabled(True)
+        self.button_open_ReID.setDisabled(False)
+
+        self.main_video_view.paint_board.init_show_all = True
+
         self.adjustSize()
 
     def __on_button_open_main_clicked(self):
@@ -199,6 +207,13 @@ class MainWidget(QWidget):
         self.main_layout.setColumnStretch(2, 1)
 
         self.main_layout.setColumnMinimumWidth(2, self.screenw * 0.2)
+
+        self.button_open_main.setDisabled(True)
+        self.button_open_mot.setDisabled(False)
+        self.button_open_ReID.setDisabled(False)
+
+        self.main_video_view.paint_board.init_show_all = False
+        self.track_view.clear()
 
         self.adjustSize()
 

@@ -1,6 +1,6 @@
 from PySide2.QtWidgets import QWidget
 from PySide2.QtCore import Qt, QPoint
-from PySide2.QtGui import QPalette, QPaintEvent, QPen, QPainter
+from PySide2.QtGui import QPalette, QPaintEvent, QPen, QPainter, QColor
 from typing import List, Dict
 
 
@@ -34,10 +34,8 @@ class TrackWidget(QWidget):
         pen.setWidth(3)
         pen.setCapStyle(Qt.RoundCap)
 
-        pen.setColor(Qt.white)
         painter.setPen(pen)
         painter.fillRect(0, 0, self.width(), self.height(), self.background_color)
-        painter.drawRect(0, 0, self.width() - 3, self.height() - 3)
 
         index = 0
         pen.setWidth(10)

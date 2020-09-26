@@ -1,78 +1,79 @@
 QMainWindow {
-    background: #1b262c;
-}
-
-QWidget {
-    border-style: outset;
+    background: #FAFAFA;
 }
 
 QPushButton {
-    background-color: #3282b8;
-    color: #bbe1fa;
-    min-width: 100px;
+    border-style: outset;
+    border-radius: 5px;
+    border-color: #757575;
+    border-width: 2px;
+    color: black;
+    min-width: 150px;
 }
 
 QPushButton:hover {
-    background-color: #92ccf3;
+    background-color: #ECEFF1;
 }
 
 QPushButton:pressed {
-    background-color: #0f4c75;
+    background-color: #E0E0E0;
+}
+
+QPushButton:disabled {
+    background-color: #42A5F5;
+    color: white;
+    border: none;
 }
 
 QGraphicsView {
+    border-style: solid;
+    border-color: #757575;
+    border-width: 2px;
     background-color: black;
-    border: 2px solid #bbe1fa;
 }
 
 QListView {
-    background: #0f4c75;
+    border-style: outset;
+    border-color: #757575;
+    border-width: 2px;
+    background: #FAFAFA;
 }
 
 QListView::item {
-    background: #0f4c75;
-    color: #bbe1fa;
+    background: #FAFAFA;
+    color: black;
 }
 
 QListView::item:selected {
-    border: 3px solid #bbe1fa;
+    border: 3px solid #42A5F5;
 }
 
 QScrollBar:horizontal {
-    border: 2px solid white;
-    background: #3282b8;
-    height: 15px;
-    margin: 0px 20px 0 20px;
+    border: none;
+    background: #FAFAFA;
+    height: 7px;
 }
 
 QScrollBar::handle:horizontal {
-    background: #bbe1fa;
+    border-radius: 3px;
+    background: #BDBDBD;
     min-width: 20px;
+    height: 7px;
 }
 
-QScrollBar::add-line:horizontal {
-    border: 2px solid white;
-    background: #3282b8;
-    width: 20px;
-    subcontrol-position: right;
-    subcontrol-origin: margin;
+QScrollBar::handle:horizontal:hover {
+    background: #9E9E9E;
 }
 
-QScrollBar::sub-line:horizontal {
-    border: 2px solid white;
-    background: #3282b8;
-    width: 20px;
-    subcontrol-position: left;
-    subcontrol-origin: margin;
+QScrollBar::handle:horizontal:pressed {
+    background: #757575;
 }
 
-QScrollBar:left-arrow:horizontal, QScrollBar::right-arrow:horizontal {
-    border: 2px solid grey;
-    width: 3px;
-    height: 3px;
-    background: #bbe1fa;
+QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical, QScrollBar::sub-line:horizontal, QScrollBar::add-line:horizontal {
+    width: 0;
+    height: 0;
 }
 
-QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical, QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
     background: none;
 }
