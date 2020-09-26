@@ -12,17 +12,20 @@ from windows.map_label import MapLabel
 from operators.convertor import get_absolute_qurl
 from operators.reid_operator import ReidContainer
 from windows.track_widget import TrackWidget
+from windows.main_window import MainWindow
 
 
 class MainWidget(QWidget):
     last_index: int = -1
     screenw: int = 0
     screenh: int = 0
+    window: MainWindow
 
-    def __init__(self, screenw: int, screenh: int):
+    def __init__(self, screenw: int, screenh: int, window: MainWindow):
         QWidget.__init__(self)
         self.screenw = screenw
         self.screenh = screenh
+        self.window = window
 
         self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         # 播放器
@@ -64,7 +67,8 @@ class MainWidget(QWidget):
 
         # 视频预览列表
         self.preview_list = PreviewListWidget()
-        self.preview_list.itemPressed.connect(self.__on_list_item_pressed)
+        self.preview_list.currentItemChanged.connect(self.__on_current_item_changed)
+        self.preview_list.setSelectionMode(QAbstractItemView.SingleSelection)
 
         # 视频窗口
         """
@@ -131,9 +135,12 @@ class MainWidget(QWidget):
         self.setLayout(self.main_layout)
         self.player.play()
 
+        self.window.show_message("准备就绪")
+
     def set_reid_container(self, c: ReidContainer):
         self.main_video_view.paint_board.reid_container = c
         print(f"Set reid container, record {len(c.info)}")
+        self.window.show_message(f"已设置REID，共 {len(c.info)} 条记录")
 
     def __on_position_changed(self, pos):
         self.main_video_view.paint_board.set_now_time(pos)
@@ -142,6 +149,7 @@ class MainWidget(QWidget):
     def __on_video_mouse_press(self, event: QMouseEvent):
         self.main_video_view.paint_board.on_click(event)
         self.main_video_view.paint_board.update()
+        self.window.show_message("视频点击已处理")
 
     def __change_video(self, new_index: int):
         print(f"Now playing index {new_index}")
@@ -163,9 +171,10 @@ class MainWidget(QWidget):
         self.track_view.clear()
 
         self.last_index = index
+        self.window.show_message(f"正在播放 {index + 1} 号视频")
 
-    def __on_list_item_pressed(self, item: QListWidgetItem):
-        if isinstance(item, PreviewItem):
+    def __on_current_item_changed(self, current: QListWidgetItem, pre: QListWidgetItem):
+        if isinstance(current, PreviewItem):
             self.__change_video(self.preview_list.currentIndex().row())
 
     def add_video(self, item: PreviewItem):
@@ -180,9 +189,11 @@ class MainWidget(QWidget):
         if self.player.state() == QMediaPlayer.PlayingState:
             self.player.pause()
             self.pause_button.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
+            self.window.show_message("暂停视频")
         elif self.player.state() == QMediaPlayer.PausedState:
             self.player.play()
             self.pause_button.setIcon(self.style().standardIcon(QStyle.SP_MediaPause))
+            self.window.show_message("播放视频")
 
     def __on_button_open_mot_clicked(self):
         print("Switching MOT layout")
@@ -196,6 +207,7 @@ class MainWidget(QWidget):
         self.main_video_view.paint_board.init_show_all = True
 
         self.adjustSize()
+        self.window.show_message("已切换到 MOT 布局")
 
     def __on_button_open_main_clicked(self):
         print("Switching Main layout")
@@ -217,6 +229,8 @@ class MainWidget(QWidget):
 
         self.adjustSize()
 
+        self.window.show_message("已切换到主界面布局")
+
     def adjustSize(self):
         super().adjustSize()
-        self.window().adjustSize()
+        self.window.adjustSize()

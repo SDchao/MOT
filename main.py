@@ -11,8 +11,10 @@ app = QApplication(sys.argv)
 
 desktopRect = QApplication.primaryScreen().geometry()
 
-main_widget = MainWidget(desktopRect.width(), desktopRect.height())
-main_window = MainWindow(main_widget)
+main_window = MainWindow()
+main_widget = MainWidget(desktopRect.width(), desktopRect.height(), main_window)
+main_window.setCentralWidget(main_widget)
+
 
 app.setStyleSheet(open("windows/qss/MainStyle.qss", "r").read())
 

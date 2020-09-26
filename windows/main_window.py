@@ -4,7 +4,7 @@ import sys
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, widget):
+    def __init__(self):
         QMainWindow.__init__(self)
         self.setWindowTitle("MOT")
 
@@ -26,10 +26,7 @@ class MainWindow(QMainWindow):
 
         # Status
         self.status = self.statusBar()
-        self.status.showMessage("准备就绪")
-
-        self.setCentralWidget(widget)
-        self.adjustSize()
+        self.status.showMessage("正在加载主界面")
 
     def center_screen(self):
         desktop_rect = QApplication.primaryScreen().geometry()
@@ -40,6 +37,9 @@ class MainWindow(QMainWindow):
     def adjustSize(self):
         super(MainWindow, self).adjustSize()
         self.center_screen()
+
+    def show_message(self, msg: str, timeout=5000):
+        self.status.showMessage(msg, timeout)
 
     @Slot()
     def exit_app(self):

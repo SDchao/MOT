@@ -48,6 +48,7 @@ QListView::item:selected {
     border: 3px solid #42A5F5;
 }
 
+
 QScrollBar:horizontal {
     border: none;
     background: #FAFAFA;
