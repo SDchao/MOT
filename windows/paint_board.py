@@ -25,7 +25,7 @@ class PaintBoard(QWidget):
     track_widget: TrackWidget = None
     init_show_all: bool = False
 
-    color_list = [Qt.green, Qt.red, Qt.blue, Qt.cyan, Qt.magenta]
+    color_list = [Qt.green, Qt.red, Qt.blue, Qt.cyan, Qt.magenta, Qt.gray]
 
     def __init__(self, parent=None, track_view=None, init_show_all=False):
         QWidget.__init__(self, parent)
