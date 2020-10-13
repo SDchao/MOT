@@ -52,14 +52,13 @@ QListView::item:selected {
 QScrollBar:horizontal {
     border: none;
     background: #FAFAFA;
-    height: 7px;
+    height: 10px;
 }
 
 QScrollBar::handle:horizontal {
-    border-radius: 3px;
+    border-radius: 5px;
     background: #BDBDBD;
     min-width: 20px;
-    height: 7px;
 }
 
 QScrollBar::handle:horizontal:hover {

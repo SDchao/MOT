@@ -9,6 +9,7 @@ from windows.paint_board import PaintBoard
 from windows.video_view import VideoGraphicsView
 from windows.preview_item import PreviewItem
 from windows.map_label import MapLabel
+from windows.avatar_label import AvatarLabel
 from operators.convertor import get_absolute_qurl
 from operators.reid_operator import ReidContainer
 from windows.track_widget import TrackWidget
@@ -49,6 +50,7 @@ class MainWidget(QWidget):
 
         self.button_open_main.clicked.connect(self.__on_button_open_main_clicked)
         self.button_open_mot.clicked.connect(self.__on_button_open_mot_clicked)
+        self.button_open_ReID.clicked.connect(self.__on_button_open_reid_clicked)
 
         left_button_group = (
             self.button_open_main, self.button_open_mot, self.button_open_ReID)
@@ -97,18 +99,24 @@ class MainWidget(QWidget):
 
         self.main_video_view.mousePressEvent = self.__on_video_mouse_press
 
-        # 右下轨迹图
+        # 右头像
+        self.avatar_label = AvatarLabel()
+
+        # 右轨迹图
         self.track_view = TrackWidget(screenw * 0.2, screenh * 0.2, 1272, 720)
         self.main_video_view.paint_board.track_widget = self.track_view
 
-        # 右下地图
+        # 右地图
         self.map_label = MapLabel()
         # self.map_label.setFixedSize(411 * 2, 282 * 2)
 
-        # 右下布局
+        # 右布局
         right_v_layout = QVBoxLayout()
+        right_v_layout.addWidget(self.avatar_label)
         right_v_layout.addWidget(self.track_view, 0, Qt.AlignCenter)
         right_v_layout.addWidget(self.map_label, 0, Qt.AlignCenter)
+
+        self.avatar_label.hide()
 
         # 窗口的底层Layout
         self.main_layout = QGridLayout()
@@ -199,6 +207,8 @@ class MainWidget(QWidget):
         print("Switching MOT layout")
         self.track_view.hide()
         self.map_label.hide()
+        self.avatar_label.hide()
+
         self.main_layout.setColumnMinimumWidth(2, 0)
         self.button_open_main.setDisabled(False)
         self.button_open_mot.setDisabled(True)
@@ -213,6 +223,7 @@ class MainWidget(QWidget):
         print("Switching Main layout")
         self.track_view.show()
         self.map_label.show()
+        self.avatar_label.hide()
         # 设置宽度
         self.main_layout.setColumnStretch(0, 1)
         self.main_layout.setColumnStretch(1, 3)
@@ -230,6 +241,29 @@ class MainWidget(QWidget):
         self.adjustSize()
 
         self.window.show_message("已切换到主界面布局")
+
+    def __on_button_open_reid_clicked(self):
+        print("Switching Reid layout")
+        self.track_view.hide()
+        self.map_label.show()
+        self.avatar_label.show()
+        # 设置宽度
+        self.main_layout.setColumnStretch(0, 1)
+        self.main_layout.setColumnStretch(1, 3)
+        self.main_layout.setColumnStretch(2, 1)
+
+        self.main_layout.setColumnMinimumWidth(2, self.screenw * 0.2)
+
+        self.button_open_main.setDisabled(False)
+        self.button_open_mot.setDisabled(False)
+        self.button_open_ReID.setDisabled(True)
+
+        self.main_video_view.paint_board.init_show_all = False
+        self.track_view.clear()
+
+        self.adjustSize()
+
+        self.window.show_message("已切换到ReID布局")
 
     def adjustSize(self):
         super().adjustSize()
