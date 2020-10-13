@@ -12,19 +12,21 @@ class AvatarLabel(QLabel):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        self.setAlignment(Qt.AlignLeft | Qt.AlignTop)
-        self.setMinimumSize(100, 200)
+        self.setAlignment(Qt.AlignCenter)
+        self.setMaximumSize(100, 300)
+        self.setMinimumSize(50, 150)
 
-        self.setObjectName("MapLabel")
+        self.setObjectName("AvatarLabel")
+        self.set_avatar("data/group1/image/1/c1_10_682_94_47_144_10.jpg")
 
     def resizeEvent(self, event: QResizeEvent):
         if self.raw_pixmap:
             self.set_avatar(self.raw_pixmap)
 
-    def set_avatar(self, avatar_path: QPixmap) -> None:
+    def set_avatar(self, avatar_path: str) -> None:
         pixmap = QPixmap(avatar_path)
         self.raw_pixmap = pixmap
         new_pixmap = pixmap.scaled(self.width(), self.height(),
                                    Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.setPixmap(new_pixmap)
-        self.setMinimumSize(new_pixmap.size())
+        self.setMaximumSize(new_pixmap.size())

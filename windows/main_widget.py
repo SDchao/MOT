@@ -112,7 +112,7 @@ class MainWidget(QWidget):
 
         # 右布局
         right_v_layout = QVBoxLayout()
-        right_v_layout.addWidget(self.avatar_label)
+        right_v_layout.addWidget(self.avatar_label, 0, Qt.AlignCenter)
         right_v_layout.addWidget(self.track_view, 0, Qt.AlignCenter)
         right_v_layout.addWidget(self.map_label, 0, Qt.AlignCenter)
 
