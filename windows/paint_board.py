@@ -1,12 +1,14 @@
 from PySide2.QtWidgets import QWidget
 from PySide2.QtCore import Qt, QSize, QRect, QPoint
 from PySide2.QtGui import QPainter, QPen, QFont, QFontMetrics, QMouseEvent
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 from operators.video_operator import VideoDataCollection, VideoData
-from operators.reid_operator import ReidContainer
+from operators.reid_operator import ReidContainer, get_reid_dict
 import operators.video_operator as video_operator
 from windows.track_widget import TrackWidget
+from windows.avatar_label import AvatarLabel
+from operators.convertor import img_path_2_id, txt_path_2_img_path
 
 
 class PaintBoard(QWidget):
@@ -23,9 +25,10 @@ class PaintBoard(QWidget):
     metrics = QFontMetrics(font)
     last_raw_size: QSize = None
     track_widget: TrackWidget = None
+    avatar_label: AvatarLabel = None
     init_show_all: bool = False
 
-    color_list = [Qt.green, Qt.red, Qt.blue, Qt.cyan, Qt.magenta, Qt.gray]
+    color_list = [Qt.green, Qt.red, Qt.blue, Qt.cyan, Qt.magenta]
 
     def __init__(self, parent=None, track_view=None, init_show_all=False):
         QWidget.__init__(self, parent)
@@ -33,6 +36,9 @@ class PaintBoard(QWidget):
         self.setPalette(Qt.transparent)
         self.track_widget = track_view
         self.init_show_all = init_show_all
+
+    def set_avatar_label(self, avatar_label):
+        self.avatar_label = avatar_label
 
     def paintEvent(self, e):
         painter = QPainter(self)
@@ -102,18 +108,29 @@ class PaintBoard(QWidget):
             self.kw = self.size().width() / self.last_raw_size.width()
             self.kh = self.size().height() / self.last_raw_size.height()
 
-    def renew_select(self, last_index: int, new_index: int):
+    def renew_select(self, last_index: int, new_index: int, last_pos: int):
         if self.selecting_ids:
             now_id = self.selecting_ids[0]
-            if self.reid_container:
-                new_id = self.reid_container.get_reid(last_index, now_id, new_index)
-                if new_id > 0:
-                    self.__set_id(new_id)
-                    print(f"Reid {now_id} -> {new_id}")
-                else:
-                    self.selecting_ids = []
+            # if self.reid_container:
+            #     new_id = self.reid_container.get_reid(last_index, now_id, new_index)
+            #     if new_id > 0:
+            #         self.__set_id(new_id)
+            #         print(f"Reid {now_id} -> {new_id}")
+            #     else:
+            #         self.selecting_ids = []
+            # else:
+            #     self.selecting_ids = []
+            now_frame = round(last_pos / 1000 * self.now_data_collection.fps)
+            reid_dict = get_reid_dict(last_index, now_id, now_frame, new_index, "data/group1")
+            if "list" in reid_dict and reid_dict["list"]:
+                new_id = img_path_2_id(reid_dict["list"][0])
+                self.__set_id(new_id)
+                origin_img_path = txt_path_2_img_path(reid_dict["origin"])
+                self.avatar_label.set_avatar(origin_img_path)
+                self.avatar_label.set_id(new_index, new_id)
             else:
                 self.selecting_ids = []
+                self.avatar_label.clear_id()
 
     def __set_id(self, target_id: int):
         self.selecting_ids = []
@@ -124,7 +141,7 @@ class PaintBoard(QWidget):
         else:
             self.selecting_ids.append(target_id)
 
-    def on_click(self, event: QMouseEvent):
+    def on_click(self, event: QMouseEvent) -> Optional[int]:
         click_point = event.pos()
         if self.track_widget:
             self.track_widget.clear()
@@ -133,6 +150,7 @@ class PaintBoard(QWidget):
             if rect.contains(click_point):
                 target_id = info[1]
                 self.__set_id(target_id)
-                return
+                return target_id
 
         self.selecting_ids = []
+        return None

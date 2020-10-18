@@ -1,13 +1,19 @@
+from typing import List
+import os
+
 from PySide2.QtWidgets import QLabel, QSizePolicy
 from PySide2.QtGui import QPixmap, QResizeEvent
-from PySide2.QtCore import Qt, QPoint
+from PySide2.QtCore import Qt
+from operators.convertor import img_path_2_frame, img_path_2_id
 
 
 class AvatarLabel(QLabel):
-    now_pos: QPoint = None
-    aspect_ratio = 0.5
     raw_pixmap: QPixmap = None
-    all_pos: list = []
+    img_list: List[str] = []
+    fps: float = 1
+    now_img_index = -1
+    IMG_ROOT_PATH = "data/group1/image"
+    need_update = False
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -17,7 +23,6 @@ class AvatarLabel(QLabel):
         self.setMinimumSize(50, 150)
 
         self.setObjectName("AvatarLabel")
-        self.set_avatar("data/group1/image/1/c1_10_682_94_47_144_10.jpg")
 
     def resizeEvent(self, event: QResizeEvent):
         if self.raw_pixmap:
@@ -30,3 +35,47 @@ class AvatarLabel(QLabel):
                                    Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.setPixmap(new_pixmap)
         self.setMaximumSize(new_pixmap.size())
+
+    def check_avatar_update(self, pos: int, force_update=False):
+        pos = round(pos / 1000 * self.fps)
+        if self.now_img_index >= 0 and (self.need_update or force_update):
+            self.need_update = False
+            img_list = self.img_list
+            now_pos_dif = abs(pos - img_path_2_frame(img_list[self.now_img_index]))
+            result_index = None
+            for i in range(len(img_list)):
+                pos_dif = pos - img_path_2_frame(img_list[i])
+                if pos_dif > 0:
+                    if pos_dif < now_pos_dif:
+                        result_index = i
+
+            if result_index and result_index != self.now_img_index:
+                self.now_img_index = result_index
+                self.set_avatar(img_list[result_index])
+
+    def set_id(self, video_index: int, new_id: int):
+        self.img_list = []
+        video_num = video_index + 1
+        img_video_path = self.IMG_ROOT_PATH + "/" + str(video_num)
+        img_raw_list = os.listdir(img_video_path)
+        for path in img_raw_list:
+            path = img_video_path + "/" + path
+            if img_path_2_id(path) == new_id:
+                self.img_list.append(path)
+                self.now_img_index = 0
+                self.need_update = True
+        print(f"Find new id avatar {len(self.img_list)}")
+
+    def clear_id(self):
+        self.now_img_index = -1
+        self.img_list = []
+        self.setPixmap(QPixmap())
+
+    def get_now_img_path(self):
+        if self.now_img_index >= 0:
+            return self.img_list[self.now_img_index]
+        else:
+            return None
+
+    def set_data(self, fps: float):
+        self.fps = fps

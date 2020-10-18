@@ -101,6 +101,7 @@ class MainWidget(QWidget):
 
         # 右头像
         self.avatar_label = AvatarLabel()
+        self.main_video_view.paint_board.set_avatar_label(self.avatar_label)
 
         # 右轨迹图
         self.track_view = TrackWidget(screenw * 0.2, screenh * 0.2, 1272, 720)
@@ -153,10 +154,17 @@ class MainWidget(QWidget):
     def __on_position_changed(self, pos):
         self.main_video_view.paint_board.set_now_time(pos)
         self.main_video_view.paint_board.update()
+        self.avatar_label.check_avatar_update(pos)
 
     def __on_video_mouse_press(self, event: QMouseEvent):
-        self.main_video_view.paint_board.on_click(event)
+        target_id = self.main_video_view.paint_board.on_click(event)
         self.main_video_view.paint_board.update()
+
+        if target_id:
+            self.avatar_label.set_id(self.last_index, target_id)
+        else:
+            self.avatar_label.clear_id()
+
         self.window.show_message("视频点击已处理")
 
     def __change_video(self, new_index: int):
@@ -167,6 +175,7 @@ class MainWidget(QWidget):
         self.map_label.set_now_pos(item.map_pos)
         self.main_video_view.paint_board.read_data(item.video_path, item.fps)
         self.main_video_view.paint_board.set_raw_size(item.video_size)
+        self.avatar_label.set_data(item.fps)
 
     def __current_index_changed(self, index: int):
         self.preview_list.setCurrentRow(index)
@@ -174,8 +183,9 @@ class MainWidget(QWidget):
 
         self.player.play()
 
+        self.main_video_view.paint_board.renew_select(self.last_index, index, self.player.position())
         self.__change_video_data(self.preview_list.item(index))
-        self.main_video_view.paint_board.renew_select(self.last_index, index)
+
         self.track_view.clear()
 
         self.last_index = index
