@@ -181,15 +181,19 @@ class MainWidget(QWidget):
         self.preview_list.setCurrentRow(index)
         self.preview_list.item(index).setSelected(True)
 
-        self.player.play()
-
-        self.main_video_view.paint_board.renew_select(self.last_index, index, self.player.position())
         self.__change_video_data(self.preview_list.item(index))
+        if self.last_index >= 0:
+            pos = self.player.position()
+            if pos == 0:
+                pos = 9223372036854775807
+            last_item: PreviewItem = self.preview_list.item(self.last_index)
+            self.main_video_view.paint_board.renew_select(self.last_index, index, pos, last_item.fps)
 
         self.track_view.clear()
 
         self.last_index = index
         self.window.show_message(f"正在播放 {index + 1} 号视频")
+        self.player.play()
 
     def __on_current_item_changed(self, current: QListWidgetItem, pre: QListWidgetItem):
         if isinstance(current, PreviewItem):
