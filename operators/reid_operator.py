@@ -42,14 +42,15 @@ def get_reid_dict(last_index, raw_id, last_frame, new_index, data_root):
                     target_data_file = data_path
         if target_data_file:
             target_data_file = data_root_path + "/" + target_data_file
-            reid_dict["origin"] = target_data_file
+            if "origin" not in reid_dict:
+                reid_dict["origin"] = target_data_file
             try:
                 with open(target_data_file, "r", encoding="utf8") as f:
                     content = f.read()
                 reid_dict["list"] = content.split("\n")
                 last_frame = img_path_2_frame(reid_dict["list"][0])
                 raw_id = img_path_2_id(reid_dict["list"][0])
-                print(f"Find new ID {raw_id}, based on {reid_dict['origin']}")
+                print(f"Find new ID {raw_id}, based on {target_data_file}")
             except OSError:
                 print(f"Cannot read {target_data_file}")
         else:
