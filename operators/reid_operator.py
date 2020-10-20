@@ -3,6 +3,7 @@ from typing import Dict
 import os
 
 from operators.convertor import img_path_2_id, img_path_2_frame
+from operators.motlogging import logger
 
 
 class ReidContainer(object):
@@ -50,9 +51,9 @@ def get_reid_dict(last_index, raw_id, last_frame, new_index, data_root):
                 reid_dict["list"] = content.split("\n")
                 last_frame = img_path_2_frame(reid_dict["list"][0])
                 raw_id = img_path_2_id(reid_dict["list"][0])
-                print(f"Find new ID {raw_id}, based on {target_data_file}")
+                logger.info(f"Find new ID {raw_id}, based on {target_data_file}")
             except OSError:
-                print(f"Cannot read {target_data_file}")
+                logger.error(f"Cannot read {target_data_file}")
         else:
             reid_dict["origin"] = None
             reid_dict["list"] = []

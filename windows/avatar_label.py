@@ -5,6 +5,7 @@ from PySide2.QtWidgets import QLabel, QSizePolicy
 from PySide2.QtGui import QPixmap, QResizeEvent
 from PySide2.QtCore import Qt
 from operators.convertor import img_path_2_frame, img_path_2_id
+from operators.motlogging import logger
 
 
 class AvatarLabel(QLabel):
@@ -64,7 +65,7 @@ class AvatarLabel(QLabel):
                 self.img_list.append(path)
                 self.now_img_index = 0
                 self.need_update = True
-        print(f"Find new id avatar {len(self.img_list)}")
+        logger.info(f"Find new id avatar, has {len(self.img_list)} images")
 
     def clear_id(self):
         self.now_img_index = -1

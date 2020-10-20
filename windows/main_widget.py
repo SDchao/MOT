@@ -12,6 +12,7 @@ from windows.map_label import MapLabel
 from windows.avatar_label import AvatarLabel
 from operators.convertor import get_absolute_qurl
 from operators.reid_operator import ReidContainer
+from operators.motlogging import logger
 from windows.track_widget import TrackWidget
 from windows.main_window import MainWindow
 
@@ -145,10 +146,10 @@ class MainWidget(QWidget):
         self.player.play()
 
         self.window.show_message("准备就绪")
+        logger.info("main_widget init completed")
 
     def set_reid_container(self, c: ReidContainer):
         self.main_video_view.paint_board.reid_container = c
-        print(f"Set reid container, record {len(c.info)}")
         self.window.show_message(f"已设置REID，共 {len(c.info)} 条记录")
 
     def __on_position_changed(self, pos):
@@ -168,7 +169,7 @@ class MainWidget(QWidget):
         self.window.show_message("视频点击已处理")
 
     def __change_video(self, new_index: int):
-        print(f"Now playing index {new_index}")
+        logger.info(f"Now playing index {new_index}")
         self.play_list.setCurrentIndex(new_index)
 
     def __change_video_data(self, item: PreviewItem):
@@ -218,7 +219,7 @@ class MainWidget(QWidget):
             self.window.show_message("播放视频")
 
     def __on_button_open_mot_clicked(self):
-        print("Switching MOT layout")
+        logger.info("Switching MOT layout")
         self.track_view.hide()
         self.map_label.hide()
         self.avatar_label.hide()
@@ -234,7 +235,7 @@ class MainWidget(QWidget):
         self.window.show_message("已切换到 MOT 布局")
 
     def __on_button_open_main_clicked(self):
-        print("Switching Main layout")
+        logger.info("Switching Main layout")
         self.track_view.show()
         self.map_label.show()
         self.avatar_label.hide()
@@ -257,7 +258,7 @@ class MainWidget(QWidget):
         self.window.show_message("已切换到主界面布局")
 
     def __on_button_open_reid_clicked(self):
-        print("Switching Reid layout")
+        logger.info("Switching Reid layout")
         self.track_view.hide()
         self.map_label.show()
         self.avatar_label.show()

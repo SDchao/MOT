@@ -1,6 +1,8 @@
 from PySide2.QtCore import QSize
 from PySide2.QtWidgets import QListView, QListWidget, QListWidgetItem, QSizePolicy
 from PySide2.QtCore import Qt
+
+from operators.motlogging import logger
 from windows.preview_item import PreviewItem
 
 
@@ -20,4 +22,4 @@ class PreviewListWidget(QListWidget):
 
     def insert_item(self, item: PreviewItem):
         self.addItem(item)
-        print("Found video: " + item.video_path)
+        logger.info("Found video: " + item.video_path)

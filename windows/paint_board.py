@@ -3,6 +3,7 @@ from PySide2.QtCore import Qt, QSize, QRect, QPoint
 from PySide2.QtGui import QPainter, QPen, QFont, QFontMetrics, QMouseEvent
 from typing import List, Dict, Optional
 
+from operators.motlogging import logger
 from operators.video_operator import VideoDataCollection, VideoData
 from operators.reid_operator import ReidContainer, get_reid_dict
 import operators.video_operator as video_operator
@@ -128,9 +129,11 @@ class PaintBoard(QWidget):
                 origin_img_path = txt_path_2_img_path(reid_dict["origin"])
                 self.avatar_label.set_avatar(origin_img_path)
                 self.avatar_label.set_id(new_index, new_id)
+                logger.info(f"REID: {now_id} -> {new_id}")
             else:
                 self.selecting_ids = []
                 self.avatar_label.clear_id()
+                logger.info(f"REID: no paring id, clearing")
 
     def __set_id(self, target_id: int):
         self.selecting_ids = []
@@ -140,6 +143,7 @@ class PaintBoard(QWidget):
                 self.selecting_ids.append(new_id)
         else:
             self.selecting_ids.append(target_id)
+        logger.info(f"Targeting new id {self.selecting_ids}")
 
     def on_click(self, event: QMouseEvent) -> Optional[int]:
         click_point = event.pos()

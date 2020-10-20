@@ -6,6 +6,7 @@ import os
 from typing import List, Union
 from operator import attrgetter
 from operators.convertor import cv_frame_2_qimage
+from operators.motlogging import logger
 
 
 class VideoInfo(object):
@@ -71,12 +72,12 @@ class VideoDataCollection(object):
                                          int(l_list[5]))
                         self.data_list.append(data)
                     else:
-                        print(f"Invalid data in {data_path}: {line}")
+                        logger.error(f"Invalid data in {data_path}: {line}")
             self.data_list.sort(key=attrgetter("frame"))
-            print(f"Read data {data_path} , found {len(self.data_list)} lines")
+            logger.info(f"Read data {data_path} , found {len(self.data_list)} lines")
         except IOError as e:
-            print("Unable to read data: " + data_path)
-            print(e)
+            logger.error("Unable to read data: " + data_path)
+            logger.error(e)
         # 读取ws
         try:
             with open(ws_path, "r", encoding="utf8") as f:
@@ -89,12 +90,12 @@ class VideoDataCollection(object):
                     if len(l_list) == 2:
                         self.ws_list.append([int(l_list[0]), int(l_list[1])])
                     else:
-                        print(f"Invalid data in {ws_path}: {line}")
+                        logger.error(f"Invalid data in {ws_path}: {line}")
 
-                print(f"Read ws {ws_path} , found {len(self.ws_list)} lines")
+                logger.info(f"Read ws {ws_path} , found {len(self.ws_list)} lines")
         except IOError as e:
-            print("Unable to read ws: " + ws_path)
-            print(e)
+            logger.error("Unable to read ws: " + ws_path)
+            logger.error(e)
 
     def get_ws_id_list(self, target_id: int) -> List[int]:
         for ws_info in self.ws_list:

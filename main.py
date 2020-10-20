@@ -6,6 +6,7 @@ import operators.video_operator as video_operator
 from operators.reid_operator import ReidContainer
 import json
 from windows.preview_item import PreviewItem
+from operators.motlogging import logger
 
 app = QApplication(sys.argv)
 
@@ -38,7 +39,7 @@ for camera_info in cameras_info:
         video_index = video[1]
         video_info = video_operator.get_video_info(video_path + video_name)
         if not video_info.no_err:
-            print("Unable to find " + video_name)
+            logger.error("Unable to find " + video_name)
             continue
         index = int(camera_info["mapPosIndex"])
         item = PreviewItem(video_info, map_poses[index])
