@@ -128,7 +128,7 @@ class PaintBoard(QWidget):
                 self.__set_id(new_id)
                 origin_img_path = txt_path_2_img_path(reid_dict["origin"])
                 self.avatar_label.set_avatar(origin_img_path)
-                self.avatar_label.set_id(new_index, new_id)
+                # self.avatar_label.set_id(new_index, new_id)
                 logger.info(f"REID: {now_id} -> {new_id}")
             else:
                 self.selecting_ids = []
