@@ -18,10 +18,10 @@ class AvatarLabel(QLabel):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         self.setAlignment(Qt.AlignCenter)
-        self.setMinimumSize(200, 320)
-        self.setMaximumSize(250, 400)
+        self.setMinimumWidth(200)
+        self.setMaximumWidth(250)
+        self.setFixedHeight(400)
 
         self.setObjectName("AvatarLabel")
 
@@ -32,7 +32,7 @@ class AvatarLabel(QLabel):
     def set_avatar(self, avatar_path: str) -> None:
         pixmap = QPixmap(avatar_path)
         self.raw_pixmap = pixmap
-        new_pixmap = pixmap.scaled(self.maximumWidth(), self.maximumHeight(),
+        new_pixmap = pixmap.scaled(self.maximumWidth(), self.height(),
                                    Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.setPixmap(new_pixmap)
 
