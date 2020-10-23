@@ -16,12 +16,17 @@ from operators.motlogging import logger
 from windows.track_widget import TrackWidget
 from windows.main_window import MainWindow
 
+LAYOUT_MAIN = 1
+LAYOUT_MOT = 2
+LAYOUT_REID = 3
+
 
 class MainWidget(QWidget):
     last_index: int = -1
     screenw: int = 0
     screenh: int = 0
     window: MainWindow
+    layout_mode = LAYOUT_MAIN
 
     def __init__(self, screenw: int, screenh: int, window: MainWindow):
         QWidget.__init__(self)
@@ -158,7 +163,14 @@ class MainWidget(QWidget):
         self.avatar_label.check_avatar_update(pos)
 
     def __on_video_mouse_press(self, event: QMouseEvent):
-        target_id = self.main_video_view.paint_board.on_click(event)
+        if self.layout_mode == LAYOUT_MOT:
+            return
+
+        ws_mode = True
+        if self.layout_mode == LAYOUT_REID:
+            ws_mode = False
+
+        target_id = self.main_video_view.paint_board.on_click(event, ws_mode)
         self.main_video_view.paint_board.update()
 
         if target_id:
@@ -220,6 +232,8 @@ class MainWidget(QWidget):
 
     def __on_button_open_mot_clicked(self):
         logger.info("Switching MOT layout")
+        self.layout_mode = LAYOUT_MOT
+
         self.track_view.hide()
         self.map_label.hide()
         self.avatar_label.hide()
@@ -230,12 +244,14 @@ class MainWidget(QWidget):
         self.button_open_ReID.setDisabled(False)
 
         self.main_video_view.paint_board.init_show_all = True
+        self.main_video_view.paint_board.clear_id()
 
         self.adjustSize()
         self.window.show_message("已切换到 MOT 布局")
 
     def __on_button_open_main_clicked(self):
         logger.info("Switching Main layout")
+        self.layout_mode = LAYOUT_MAIN
         self.track_view.show()
         self.map_label.show()
         self.avatar_label.hide()
@@ -251,6 +267,7 @@ class MainWidget(QWidget):
         self.button_open_ReID.setDisabled(False)
 
         self.main_video_view.paint_board.init_show_all = False
+        self.main_video_view.paint_board.clear_id()
         self.track_view.clear()
 
         self.adjustSize()
@@ -259,6 +276,7 @@ class MainWidget(QWidget):
 
     def __on_button_open_reid_clicked(self):
         logger.info("Switching Reid layout")
+        self.layout_mode = LAYOUT_REID
         self.track_view.hide()
         self.map_label.show()
         self.avatar_label.show()
@@ -275,6 +293,7 @@ class MainWidget(QWidget):
         self.button_open_ReID.setDisabled(True)
 
         self.main_video_view.paint_board.init_show_all = False
+        self.main_video_view.paint_board.clear_id()
         self.track_view.clear()
 
         self.adjustSize()

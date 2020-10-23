@@ -136,18 +136,21 @@ class PaintBoard(QWidget):
                 self.avatar_label.clear_id()
                 logger.info(f"REID: no paring id, clearing")
 
-    def __set_id(self, target_id: int):
+    def __set_id(self, target_id: int, ws_mode=True):
         self.user_selected_id = target_id
         self.selecting_ids = []
-        ws_list = self.now_data_collection.get_ws_id_list(target_id)
-        if ws_list:
-            for new_id in ws_list:
-                self.selecting_ids.append(new_id)
+        if ws_mode:
+            ws_list = self.now_data_collection.get_ws_id_list(target_id)
+            if ws_list:
+                for new_id in ws_list:
+                    self.selecting_ids.append(new_id)
+            else:
+                self.selecting_ids.append(target_id)
         else:
             self.selecting_ids.append(target_id)
         logger.info(f"Targeting new id {self.selecting_ids}")
 
-    def on_click(self, event: QMouseEvent) -> Optional[int]:
+    def on_click(self, event: QMouseEvent, ws_mode=True) -> Optional[int]:
         click_point = event.pos()
         if self.track_widget:
             self.track_widget.clear()
@@ -155,9 +158,15 @@ class PaintBoard(QWidget):
             rect: QRect = info[0]
             if rect.contains(click_point):
                 target_id = info[1]
-                self.__set_id(target_id)
+                self.__set_id(target_id, ws_mode)
                 return target_id
 
         self.selecting_ids = []
         self.user_selected_id = -1
         return None
+
+    def clear_id(self):
+        if self.track_widget:
+            self.track_widget.clear()
+            self.selecting_ids = []
+            self.user_selected_id = -1
