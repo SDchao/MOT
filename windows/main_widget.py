@@ -262,6 +262,7 @@ class MainWidget(QWidget):
         self.track_view.hide()
         self.map_label.show()
         self.avatar_label.show()
+        self.avatar_label.clear_id()
         # 设置宽度
         self.main_layout.setColumnStretch(0, 1)
         self.main_layout.setColumnStretch(1, 3)

@@ -15,6 +15,7 @@ from operators.convertor import img_path_2_id, txt_path_2_img_path
 class PaintBoard(QWidget):
     now_data_collection: VideoDataCollection
     reid_container: ReidContainer = None
+    user_selected_id: int = -1
     selecting_ids: list = []
     now_info: List[List] = []
     showing_info: List = []
@@ -111,7 +112,7 @@ class PaintBoard(QWidget):
 
     def renew_select(self, last_index: int, new_index: int, last_pos: int, last_fps: float):
         if self.selecting_ids:
-            now_id = self.selecting_ids[0]
+            now_id = self.user_selected_id
             # if self.reid_container:
             #     new_id = self.reid_container.get_reid(last_index, now_id, new_index)
             #     if new_id > 0:
@@ -136,6 +137,7 @@ class PaintBoard(QWidget):
                 logger.info(f"REID: no paring id, clearing")
 
     def __set_id(self, target_id: int):
+        self.user_selected_id = target_id
         self.selecting_ids = []
         ws_list = self.now_data_collection.get_ws_id_list(target_id)
         if ws_list:
@@ -157,4 +159,5 @@ class PaintBoard(QWidget):
                 return target_id
 
         self.selecting_ids = []
+        self.user_selected_id = -1
         return None
