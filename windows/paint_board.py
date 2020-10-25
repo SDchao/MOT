@@ -110,7 +110,7 @@ class PaintBoard(QWidget):
             self.kw = self.size().width() / self.last_raw_size.width()
             self.kh = self.size().height() / self.last_raw_size.height()
 
-    def renew_select(self, last_index: int, new_index: int, last_pos: int, last_fps: float):
+    def renew_select(self, last_index: int, new_index: int, last_pos: int, last_fps: float, ws_mode=True):
         if self.selecting_ids:
             now_id = self.user_selected_id
             # if self.reid_container:
@@ -126,7 +126,7 @@ class PaintBoard(QWidget):
             reid_dict = get_reid_dict(last_index, now_id, now_frame, new_index, "data/group1")
             if "list" in reid_dict and reid_dict["list"]:
                 new_id = img_path_2_id(reid_dict["list"][0])
-                self.__set_id(new_id)
+                self.__set_id(new_id, ws_mode)
                 origin_img_path = txt_path_2_img_path(reid_dict["origin"])
                 self.avatar_label.set_avatar(origin_img_path)
                 # self.avatar_label.set_id(new_index, new_id)

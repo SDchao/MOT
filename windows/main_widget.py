@@ -191,13 +191,17 @@ class MainWidget(QWidget):
         self.preview_list.setCurrentRow(index)
         self.preview_list.item(index).setSelected(True)
 
+        ws_mode = True
+        if self.layout_mode == LAYOUT_REID or self.layout_mode == LAYOUT_MOT:
+            ws_mode = False
+
         self.__change_video_data(self.preview_list.item(index))
         if self.last_index >= 0:
             pos = self.player.position()
             if pos == 0:
                 pos = 9223372036854775807
             last_item: PreviewItem = self.preview_list.item(self.last_index)
-            self.main_video_view.paint_board.renew_select(self.last_index, index, pos, last_item.fps)
+            self.main_video_view.paint_board.renew_select(self.last_index, index, pos, last_item.fps, ws_mode)
 
         self.track_view.clear()
 
