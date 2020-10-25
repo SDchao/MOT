@@ -163,11 +163,8 @@ class MainWidget(QWidget):
         self.avatar_label.check_avatar_update(pos)
 
     def __on_video_mouse_press(self, event: QMouseEvent):
-        if self.layout_mode == LAYOUT_MOT:
-            return
-
         ws_mode = True
-        if self.layout_mode == LAYOUT_REID:
+        if self.layout_mode == LAYOUT_REID or self.layout_mode == LAYOUT_MOT:
             ws_mode = False
 
         target_id = self.main_video_view.paint_board.on_click(event, ws_mode)
