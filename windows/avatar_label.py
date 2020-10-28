@@ -16,7 +16,7 @@ class AvatarLabel(QLabel):
     IMG_ROOT_PATH = "data/group1/image"
     need_update = False
 
-    def __init__(self, parent=None):
+    def __init__(self, data_root: str, parent=None):
         super().__init__(parent)
         self.setAlignment(Qt.AlignCenter)
         self.setMinimumWidth(200)
@@ -24,6 +24,7 @@ class AvatarLabel(QLabel):
         self.setFixedHeight(400)
 
         self.setObjectName("AvatarLabel")
+        self.IMG_ROOT_PATH = data_root + "/image"
 
     def resizeEvent(self, event: QResizeEvent):
         if self.raw_pixmap:

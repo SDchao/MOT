@@ -27,6 +27,8 @@ class MainWidget(QWidget):
     screenh: int = 0
     window: MainWindow
     layout_mode = LAYOUT_MAIN
+    use_clean_data = True
+    data_root = "data/group1"
 
     def __init__(self, screenw: int, screenh: int, window: MainWindow):
         QWidget.__init__(self)
@@ -106,7 +108,7 @@ class MainWidget(QWidget):
         self.main_video_view.mousePressEvent = self.__on_video_mouse_press
 
         # 右头像
-        self.avatar_label = AvatarLabel()
+        self.avatar_label = AvatarLabel(self.data_root)
         self.main_video_view.paint_board.set_avatar_label(self.avatar_label)
 
         # 右轨迹图
@@ -153,9 +155,11 @@ class MainWidget(QWidget):
         self.window.show_message("准备就绪")
         logger.info("main_widget init completed")
 
-    def set_reid_container(self, c: ReidContainer):
-        self.main_video_view.paint_board.reid_container = c
-        self.window.show_message(f"已设置REID，共 {len(c.info)} 条记录")
+    def set_data_mode(self, use_clean: bool):
+        self.use_clean_data = use_clean
+        self.main_video_view.paint_board.clear_id()
+        if self.play_list.currentIndex() >= 0:
+            self.__current_index_changed(self.play_list.currentIndex())
 
     def __on_position_changed(self, pos):
         self.main_video_view.paint_board.set_now_time(pos)
@@ -183,7 +187,7 @@ class MainWidget(QWidget):
 
     def __change_video_data(self, item: PreviewItem):
         self.map_label.set_now_pos(item.map_pos)
-        self.main_video_view.paint_board.read_data(item.video_path, item.fps)
+        self.main_video_view.paint_board.read_data(item.video_path, item.fps, self.use_clean_data)
         self.main_video_view.paint_board.set_raw_size(item.video_size)
         self.avatar_label.set_data(item.fps)
 
@@ -201,7 +205,8 @@ class MainWidget(QWidget):
             if pos == 0:
                 pos = 9223372036854775807
             last_item: PreviewItem = self.preview_list.item(self.last_index)
-            self.main_video_view.paint_board.renew_select(self.last_index, index, pos, last_item.fps, ws_mode)
+            self.main_video_view.paint_board.renew_select(self.last_index, index, pos, last_item.fps, self.data_root,
+                                                          ws_mode)
 
         self.track_view.clear()
 

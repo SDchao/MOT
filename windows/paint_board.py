@@ -14,7 +14,6 @@ from operators.convertor import img_path_2_id, txt_path_2_img_path
 
 class PaintBoard(QWidget):
     now_data_collection: VideoDataCollection
-    reid_container: ReidContainer = None
     user_selected_id: int = -1
     selecting_ids: list = []
     now_info: List[List] = []
@@ -92,10 +91,10 @@ class PaintBoard(QWidget):
 
             self.track_widget.add_points(points)
 
-    def read_data(self, video_path: str, fps: float):
+    def read_data(self, video_path: str, fps: float, use_clean_data: bool):
         if hasattr(self, "now_data_collection"):
             del self.now_data_collection
-        self.now_data_collection = video_operator.get_video_data(video_path, fps)
+        self.now_data_collection = video_operator.get_video_data(video_path, fps, use_clean_data)
 
     def set_now_time(self, now_time: int):
         self.now_time = now_time
@@ -110,7 +109,8 @@ class PaintBoard(QWidget):
             self.kw = self.size().width() / self.last_raw_size.width()
             self.kh = self.size().height() / self.last_raw_size.height()
 
-    def renew_select(self, last_index: int, new_index: int, last_pos: int, last_fps: float, ws_mode=True):
+    def renew_select(self, last_index: int, new_index: int, last_pos: int, last_fps: float, data_root: str,
+                     ws_mode=True):
         if self.selecting_ids:
             now_id = self.user_selected_id
             # if self.reid_container:
@@ -123,7 +123,7 @@ class PaintBoard(QWidget):
             # else:
             #     self.selecting_ids = []
             now_frame = round(last_pos / 1000 * last_fps)
-            reid_dict = get_reid_dict(last_index, now_id, now_frame, new_index, "data/group1")
+            reid_dict = get_reid_dict(last_index, now_id, now_frame, new_index, data_root)
             if "list" in reid_dict and reid_dict["list"]:
                 new_id = img_path_2_id(reid_dict["list"][0])
                 self.__set_id(new_id, ws_mode)
@@ -168,5 +168,9 @@ class PaintBoard(QWidget):
     def clear_id(self):
         if self.track_widget:
             self.track_widget.clear()
+
+        if self.avatar_label:
+            self.avatar_label.clear_id()
+
             self.selecting_ids = []
             self.user_selected_id = -1

@@ -147,10 +147,14 @@ def get_video_info(video_path: str) -> VideoInfo:
     return VideoInfo(True, q_image, size, name, fps, video_path)
 
 
-def get_video_data(video_path: str, fps: float) -> VideoDataCollection:
+def get_video_data(video_path: str, fps: float, use_clean_data) -> VideoDataCollection:
     head_path = os.path.splitext(video_path)[0]
     data_path = head_path + ".data"
-    ws_path = head_path + ".ws"
+    if use_clean_data:
+        data_path += "m"
+        ws_path = os.path.split(video_path)[0] + "\\clean.wsm"
+    else:
+        ws_path = head_path + ".ws"
     return VideoDataCollection(data_path, ws_path, fps)
 
 
