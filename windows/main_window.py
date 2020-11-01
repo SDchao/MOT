@@ -7,10 +7,11 @@ import sys
 from operators import video_operator
 from operators.motlogging import logger
 from windows.preview_item import PreviewItem
+from windows.main_widget import MainWidget
 
 
 class MainWindow(QMainWindow):
-    main_widget = None
+    main_widget: MainWidget = None
 
     def __init__(self):
         QMainWindow.__init__(self)
@@ -50,6 +51,8 @@ class MainWindow(QMainWindow):
         self.status.showMessage("正在加载主界面")
 
     def set_data(self, data_root: str):
+
+        self.main_widget.clear_data()
 
         self.main_widget.data_root = data_root
 

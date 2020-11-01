@@ -1,20 +1,16 @@
 from PySide2.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QGridLayout,
-                               QSizePolicy, QTableWidget, QTableWidgetItem,
-                               QAbstractItemView, QStyle, QListWidgetItem)
+                               QSizePolicy, QAbstractItemView, QStyle, QListWidgetItem)
 from PySide2.QtMultimedia import QMediaPlayer, QMediaPlaylist
-from PySide2.QtGui import QPixmap, QMouseEvent, QResizeEvent
+from PySide2.QtGui import QMouseEvent
 from PySide2.QtCore import Qt
 from windows.preview_list_widget import PreviewListWidget
-from windows.paint_board import PaintBoard
 from windows.video_view import VideoGraphicsView
 from windows.preview_item import PreviewItem
 from windows.map_label import MapLabel
 from windows.avatar_label import AvatarLabel
 from operators.convertor import get_absolute_qurl
-from operators.reid_operator import ReidContainer
 from operators.motlogging import logger
 from windows.track_widget import TrackWidget
-from windows.main_window import MainWindow
 
 LAYOUT_MAIN = 1
 LAYOUT_MOT = 2
@@ -25,12 +21,12 @@ class MainWidget(QWidget):
     last_index: int = -1
     screenw: int = 0
     screenh: int = 0
-    window: MainWindow
+    window = None
     layout_mode = LAYOUT_MAIN
     use_clean_data = True
     data_root = "data/group1"
 
-    def __init__(self, screenw: int, screenh: int, window: MainWindow):
+    def __init__(self, screenw: int, screenh: int, window):
         QWidget.__init__(self)
         self.screenw = screenw
         self.screenh = screenh
@@ -217,6 +213,10 @@ class MainWidget(QWidget):
     def __on_current_item_changed(self, current: QListWidgetItem, pre: QListWidgetItem):
         if isinstance(current, PreviewItem):
             self.__change_video(self.preview_list.currentIndex().row())
+
+    def clear_data(self):
+        self.preview_list.clear()
+        self.play_list.clear()
 
     def add_video(self, item: PreviewItem):
         self.__add_video_to_playlist(item.video_path)
