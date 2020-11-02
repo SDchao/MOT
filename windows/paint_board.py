@@ -91,7 +91,7 @@ class PaintBoard(QWidget):
 
             self.track_widget.add_points(points)
 
-    def read_data(self, video_path: str, fps: float, use_clean_data: bool):
+    def read_data(self, video_path: str, fps: float, use_clean_data: bool = False):
         if hasattr(self, "now_data_collection"):
             del self.now_data_collection
         self.now_data_collection = video_operator.get_video_data(video_path, fps, use_clean_data)

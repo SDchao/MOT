@@ -23,7 +23,6 @@ class MainWidget(QWidget):
     screenh: int = 0
     window = None
     layout_mode = LAYOUT_MAIN
-    use_clean_data = True
     data_root = "data/group1"
 
     def __init__(self, screenw: int, screenh: int, window):
@@ -151,12 +150,6 @@ class MainWidget(QWidget):
         self.window.show_message("准备就绪")
         logger.info("main_widget init completed")
 
-    def set_data_mode(self, use_clean: bool):
-        self.use_clean_data = use_clean
-        self.main_video_view.paint_board.clear_id()
-        if self.play_list.currentIndex() >= 0:
-            self.__current_index_changed(self.play_list.currentIndex())
-
     def __on_position_changed(self, pos):
         self.main_video_view.paint_board.set_now_time(pos)
         self.main_video_view.paint_board.update()
@@ -183,7 +176,7 @@ class MainWidget(QWidget):
 
     def __change_video_data(self, item: PreviewItem):
         self.map_label.set_now_pos(item.map_pos)
-        self.main_video_view.paint_board.read_data(item.video_path, item.fps, self.use_clean_data)
+        self.main_video_view.paint_board.read_data(item.video_path, item.fps)
         self.main_video_view.paint_board.set_raw_size(item.video_size)
         self.avatar_label.set_data(item.fps)
 

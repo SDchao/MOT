@@ -21,19 +21,19 @@ class MainWindow(QMainWindow):
         self.menu = self.menuBar()
         self.file_menu = self.menu.addMenu("文件")
         # Data Mode
-        self.data_mode = self.menu.addMenu("数据模式")
-
-        self.data_mode_auto_action = QAction("自动数据", self)
-        self.data_mode_auto_action.triggered.connect(self.set_data_mode_auto)
-        self.data_mode_auto_action.setCheckable(True)
-
-        self.data_mode_clean_action = QAction("clean数据", self)
-        self.data_mode_clean_action.triggered.connect(self.set_data_mode_clean)
-        self.data_mode_clean_action.setCheckable(True)
-        self.data_mode_clean_action.setChecked(True)
-
-        self.data_mode.addAction(self.data_mode_auto_action)
-        self.data_mode.addAction(self.data_mode_clean_action)
+        # self.data_mode = self.menu.addMenu("数据模式")
+        #
+        # self.data_mode_auto_action = QAction("自动数据", self)
+        # self.data_mode_auto_action.triggered.connect(self.set_data_mode_auto)
+        # self.data_mode_auto_action.setCheckable(True)
+        #
+        # self.data_mode_clean_action = QAction("clean数据", self)
+        # self.data_mode_clean_action.triggered.connect(self.set_data_mode_clean)
+        # self.data_mode_clean_action.setCheckable(True)
+        # self.data_mode_clean_action.setChecked(True)
+        #
+        # self.data_mode.addAction(self.data_mode_auto_action)
+        # self.data_mode.addAction(self.data_mode_clean_action)
         # Exit
         exit_action = QAction("退出", self)
         exit_action.setShortcut("Ctrl+Q")
