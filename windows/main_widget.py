@@ -181,27 +181,30 @@ class MainWidget(QWidget):
         self.avatar_label.set_data(item.fps)
 
     def __current_index_changed(self, index: int):
-        self.preview_list.setCurrentRow(index)
-        self.preview_list.item(index).setSelected(True)
+        if index >= 0:
+            self.preview_list.setCurrentRow(index)
+            self.preview_list.item(index).setSelected(True)
 
-        ws_mode = True
-        if self.layout_mode == LAYOUT_REID or self.layout_mode == LAYOUT_MOT:
-            ws_mode = False
+            ws_mode = True
+            if self.layout_mode == LAYOUT_REID or self.layout_mode == LAYOUT_MOT:
+                ws_mode = False
 
-        self.__change_video_data(self.preview_list.item(index))
-        if self.last_index >= 0:
-            pos = self.player.position()
-            if pos == 0:
-                pos = 9223372036854775807
-            last_item: PreviewItem = self.preview_list.item(self.last_index)
-            self.main_video_view.paint_board.renew_select(self.last_index, index, pos, last_item.fps, self.data_root,
-                                                          ws_mode)
+            self.__change_video_data(self.preview_list.item(index))
+            if self.last_index >= 0:
+                pos = self.player.position()
+                if pos == 0:
+                    pos = 9223372036854775807
+                last_item = self.preview_list.item(self.last_index)
+                if isinstance(last_item, PreviewItem):
+                    self.main_video_view.paint_board.renew_select(self.last_index, index, pos, last_item.fps,
+                                                                  self.data_root,
+                                                                  ws_mode)
 
-        self.track_view.clear()
+            self.track_view.clear()
 
-        self.last_index = index
-        self.window.show_message(f"正在播放 {index + 1} 号视频")
-        self.player.play()
+            self.last_index = index
+            self.window.show_message(f"正在播放 {index + 1} 号视频")
+            self.player.play()
 
     def __on_current_item_changed(self, current: QListWidgetItem, pre: QListWidgetItem):
         if isinstance(current, PreviewItem):
@@ -229,6 +232,10 @@ class MainWidget(QWidget):
             self.pause_button.setIcon(self.style().standardIcon(QStyle.SP_MediaPause))
             self.window.show_message("播放视频")
 
+    def reset_data(self):
+        self.preview_list.clearSelection()
+        self.window.set_data(self.data_root)
+
     def __on_button_open_mot_clicked(self):
         logger.info("Switching MOT layout")
         self.layout_mode = LAYOUT_MOT
@@ -246,6 +253,7 @@ class MainWidget(QWidget):
         self.main_video_view.paint_board.clear_id()
 
         self.adjustSize()
+        self.reset_data()
         self.window.show_message("已切换到 MOT 布局")
 
     def __on_button_open_main_clicked(self):
@@ -270,7 +278,7 @@ class MainWidget(QWidget):
         self.track_view.clear()
 
         self.adjustSize()
-
+        self.reset_data()
         self.window.show_message("已切换到主界面布局")
 
     def __on_button_open_reid_clicked(self):
@@ -296,7 +304,7 @@ class MainWidget(QWidget):
         self.track_view.clear()
 
         self.adjustSize()
-
+        self.reset_data()
         self.window.show_message("已切换到ReID布局")
 
     def adjustSize(self):
