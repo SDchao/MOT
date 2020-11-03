@@ -20,6 +20,11 @@ class MainWindow(QMainWindow):
         # Menu
         self.menu = self.menuBar()
         self.file_menu = self.menu.addMenu("文件")
+        # Exit
+        exit_action = QAction("退出", self)
+        exit_action.setShortcut("Ctrl+Q")
+        exit_action.triggered.connect(self.exit_app)
+        self.file_menu.addAction(exit_action)
         # Data Mode
         # self.data_mode = self.menu.addMenu("数据模式")
         #
@@ -34,11 +39,6 @@ class MainWindow(QMainWindow):
         #
         # self.data_mode.addAction(self.data_mode_auto_action)
         # self.data_mode.addAction(self.data_mode_clean_action)
-        # Exit
-        exit_action = QAction("退出", self)
-        exit_action.setShortcut("Ctrl+Q")
-        exit_action.triggered.connect(self.exit_app)
-        self.file_menu.addAction(exit_action)
 
         # Help
         self.help_menu = self.menu.addMenu("帮助")
