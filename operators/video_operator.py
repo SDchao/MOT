@@ -104,7 +104,7 @@ class VideoDataCollection(object):
     def get_ws_id_list(self, target_id: int) -> List[Tuple[int, float]]:
         result = []
         for ws_info in self.ws_list:
-            if target_id == ws_info[0] and ws_info[2] > 0.1:
+            if target_id == ws_info[0]:
                 result.append((ws_info[1], ws_info[2]))
 
         return result
