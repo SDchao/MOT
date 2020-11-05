@@ -233,8 +233,9 @@ class MainWidget(QWidget):
             self.window.show_message("播放视频")
 
     def reset_data(self):
-        self.preview_list.clearSelection()
-        self.window.set_data(self.data_root)
+        pass
+        # self.preview_list.clearSelection()
+        # self.window.set_data(self.data_root)
 
     def __on_button_open_mot_clicked(self):
         logger.info("Switching MOT layout")

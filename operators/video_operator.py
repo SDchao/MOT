@@ -2,8 +2,9 @@ import cv2
 from PySide2.QtGui import QImage
 from PySide2.QtCore import QSize, QRect
 import os
+import re
 
-from typing import List, Union
+from typing import List, Union, Tuple
 from operator import attrgetter
 from operators.convertor import cv_frame_2_qimage
 from operators.motlogging import logger
@@ -53,7 +54,7 @@ vertexes: {self.vertexes}"""
 
 class VideoDataCollection(object):
     data_list: List[VideoData] = []
-    ws_list: Union[List] = []
+    ws_list: List[Tuple[int, int, float]] = []  # [(target id, target wser id, porb)]
     fps: float
 
     def __init__(self, data_path: str, ws_path: str, fps: float):
@@ -86,9 +87,12 @@ class VideoDataCollection(object):
                     if line[0] == "#":
                         continue
 
-                    l_list = line.split("<-")
+                    # l_list = line.split("<-")
+                    l_list = re.split(r"<-|,", line)
                     if len(l_list) == 2:
-                        self.ws_list.append([int(l_list[0]), int(l_list[1])])
+                        self.ws_list.append((int(l_list[0]), int(l_list[1]), 1.0))
+                    elif len(l_list) == 3:
+                        self.ws_list.append((int(l_list[0]), int(l_list[1]), float(l_list[2])))
                     else:
                         logger.error(f"Invalid data in {ws_path}: {line}")
 
@@ -97,12 +101,13 @@ class VideoDataCollection(object):
             logger.error("Unable to read ws: " + ws_path)
             logger.error(e)
 
-    def get_ws_id_list(self, target_id: int) -> List[int]:
+    def get_ws_id_list(self, target_id: int) -> List[Tuple[int, float]]:
+        result = []
         for ws_info in self.ws_list:
-            if target_id in ws_info:
-                return ws_info
+            if target_id == ws_info[0] and ws_info[2] > 0.1:
+                result.append((ws_info[1], ws_info[2]))
 
-        return []
+        return result
 
     def get_data_by_time(self, time: int) -> List[VideoData]:
 

@@ -7,7 +7,7 @@ from typing import List, Dict
 class TrackWidget(QWidget):
     track_points: Dict[int, List] = {}
     final_points: Dict[int, QPoint] = {}
-    colors = [Qt.green, Qt.red, Qt.darkYellow, Qt.blue]
+    colors: Dict[int, QColor] = {}
     background_color = Qt.blue
 
     kw = 1
@@ -41,7 +41,7 @@ class TrackWidget(QWidget):
         pen.setWidth(10)
         for key in self.track_points.keys():
             last_point = None
-            color = self.colors[index % len(self.colors)]
+            color = self.colors[key]
             pen.setColor(color)
             painter.setPen(pen)
             for point in self.track_points[key]:
@@ -58,7 +58,7 @@ class TrackWidget(QWidget):
         for point in self.final_points.values():
             painter.drawPoint(point)
 
-    def add_points(self, point_dict: Dict[int, QPoint]):
+    def add_points(self, point_dict: Dict[int, List]):
         for (key, point) in self.final_points.items():
             if key in self.track_points.keys():
                 self.track_points[key].append(point)
@@ -67,13 +67,15 @@ class TrackWidget(QWidget):
 
         self.final_points = {}
 
-        for (key, new_point) in point_dict.items():
-            new_point.setX(new_point.x() * self.kw)
-            new_point.setY(new_point.y() * self.kh)
-            self.final_points[key] = new_point
+        for (key, info) in point_dict.items():
+            info[0].setX(info[0].x() * self.kw)
+            info[0].setY(info[0].y() * self.kh)
+            self.final_points[key] = info[0]
+            self.colors[key] = info[1]
 
         self.update()
 
     def clear(self):
         self.track_points = {}
         self.final_points = {}
+        self.colors = {}

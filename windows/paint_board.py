@@ -1,6 +1,6 @@
 from PySide2.QtWidgets import QWidget
 from PySide2.QtCore import Qt, QSize, QRect, QPoint
-from PySide2.QtGui import QPainter, QPen, QFont, QFontMetrics, QMouseEvent
+from PySide2.QtGui import QPainter, QPen, QFont, QFontMetrics, QMouseEvent, QColor
 from typing import List, Dict, Optional
 
 from operators.motlogging import logger
@@ -16,6 +16,7 @@ class PaintBoard(QWidget):
     now_data_collection: VideoDataCollection
     user_selected_id: int = -1
     selecting_ids: list = []
+    selecting_colors: list = []
     now_info: List[List] = []
     showing_info: List = []
     now_time: int = 0
@@ -49,6 +50,7 @@ class PaintBoard(QWidget):
             data_list_in_frame = self.now_data_collection.get_data_by_time(self.now_time)
             self.now_info = []
             self.showing_info = []
+            now_color_list = self.selecting_colors if self.selecting_colors else self.color_list
             for data in data_list_in_frame:
                 show_rect = QRect(data.vertexes[0] * self.kw, data.vertexes[1] * self.kh, data.vertexes[2] * self.kw,
                                   data.vertexes[3] * self.kh)
@@ -60,11 +62,12 @@ class PaintBoard(QWidget):
                     if self.selecting_ids or not self.init_show_all:
                         continue
 
-                self.showing_info.append([show_rect, data.no])
                 if data.no in self.selecting_ids:
-                    color = self.color_list[self.selecting_ids.index(data.no) % len(self.color_list)]
+                    color = now_color_list[self.selecting_ids.index(data.no) % len(now_color_list)]
                 else:
-                    color = self.color_list[data.no % len(self.color_list)]
+                    color = now_color_list[data.no % len(now_color_list)]
+
+                self.showing_info.append([show_rect, data.no, color])
                 # 设置笔刷
                 pen.setColor(color)
                 pen.setWidth(3)
@@ -84,10 +87,10 @@ class PaintBoard(QWidget):
                 painter.drawText(text_rect, Qt.AlignCenter, str(data.no))
                 # painter.drawRect(1, 1, 157, 452)
         if self.track_widget:
-            points: Dict[int, QPoint] = {}
+            points: Dict[int, List[QPoint, QColor]] = {}
             for info in self.showing_info:
                 rect: QRect = info[0]
-                points[info[1]] = rect.center()
+                points[info[1]] = [rect.center(), info[2]]
 
             self.track_widget.add_points(points)
 
@@ -139,16 +142,31 @@ class PaintBoard(QWidget):
     def __set_id(self, target_id: int, ws_mode=True):
         self.user_selected_id = target_id
         self.selecting_ids = []
+        self.selecting_colors = []
         if ws_mode:
-            ws_list = self.now_data_collection.get_ws_id_list(target_id)
+            ws_list = self.now_data_collection.get_ws_id_list(target_id)  # [(wser id, prob)]
             if ws_list:
-                for new_id in ws_list:
-                    self.selecting_ids.append(new_id)
+                # Add target id in list
+                self.selecting_ids.append(target_id)
+                self.selecting_colors.append(Qt.green)
+                # Add wser
+                for ws_info in ws_list:
+                    if ws_info[1] > 0.1:
+                        self.selecting_ids.append(ws_info[0])
+                        self.selecting_colors.append(self.prob_to_color(ws_info[1]))
             else:
                 self.selecting_ids.append(target_id)
         else:
             self.selecting_ids.append(target_id)
         logger.info(f"Targeting new id {self.selecting_ids}")
+
+    def prob_to_color(self, prob: float) -> QColor:
+        if prob < 0.4:
+            return Qt.yellow
+        elif prob < 0.7:
+            return QColor(255, 153, 0)
+        else:
+            return Qt.red
 
     def on_click(self, event: QMouseEvent, ws_mode=True) -> Optional[int]:
         click_point = event.pos()
@@ -173,4 +191,5 @@ class PaintBoard(QWidget):
             self.avatar_label.clear_id()
 
             self.selecting_ids = []
+            self.selecting_colors = []
             self.user_selected_id = -1
