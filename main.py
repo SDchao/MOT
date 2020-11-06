@@ -22,7 +22,7 @@ app.setStyleSheet(open("windows/qss/MainStyle.qss", "r").read())
 main_window.show()
 
 # Test info
-main_window.set_data("data/group1_clean")
+# main_window.set_data("data/group1_clean")
 
 main_window.adjustSize()
 

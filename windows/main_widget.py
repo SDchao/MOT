@@ -232,10 +232,15 @@ class MainWidget(QWidget):
             self.pause_button.setIcon(self.style().standardIcon(QStyle.SP_MediaPause))
             self.window.show_message("播放视频")
 
+    def set_data(self, data_root: str):
+        self.data_root = data_root
+        if self.avatar_label:
+            self.avatar_label.IMG_ROOT_PATH = data_root + "/image"
+
     def reset_data(self):
         pass
-        # self.preview_list.clearSelection()
-        # self.window.set_data(self.data_root)
+        self.preview_list.clearSelection()
+        self.window.set_data(self.data_root)
 
     def __on_button_open_mot_clicked(self):
         logger.info("Switching MOT layout")

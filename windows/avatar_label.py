@@ -13,7 +13,7 @@ class AvatarLabel(QLabel):
     img_list: List[str] = []
     fps: float = 1
     now_img_index = -1
-    IMG_ROOT_PATH = "data/group1/image"
+    IMG_ROOT_PATH = ""
     need_update = False
 
     def __init__(self, data_root: str, parent=None):

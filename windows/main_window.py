@@ -77,8 +77,7 @@ class MainWindow(QMainWindow):
     def set_data(self, data_root: str):
 
         self.main_widget.clear_data()
-
-        self.main_widget.data_root = data_root
+        self.main_widget.set_data(data_root)
 
         info_path = data_root + "/info.json"
         video_path = data_root + "/videos/"
