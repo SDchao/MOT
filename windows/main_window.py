@@ -1,7 +1,7 @@
 import json
 
-from PySide2.QtWidgets import QMainWindow, QAction, QApplication, QFileDialog, QMessageBox
-from PySide2.QtCore import Slot
+from PySide2.QtWidgets import QMainWindow, QAction, QApplication, QFileDialog, QMessageBox, QProgressDialog
+from PySide2.QtCore import Slot, Qt
 import sys
 
 from operators import video_operator
@@ -75,6 +75,11 @@ class MainWindow(QMainWindow):
                 msg_box.exec_()
 
     def set_data(self, data_root: str):
+        # Open Process Dialog
+        progress_dialog = QProgressDialog("正在读取数据", "取消", 0, 100, self)
+        progress_dialog.setWindowTitle("请稍后")
+        progress_dialog.setWindowModality(Qt.WindowModal)
+        progress_dialog.setMinimumDuration(0)
 
         self.main_widget.clear_data()
         self.main_widget.set_data(data_root)
@@ -91,8 +96,18 @@ class MainWindow(QMainWindow):
 
             video_item_dict = {}
 
+            i = 0
+            progress_dialog.setMaximum(len(cameras_info))
+
             for camera_info in cameras_info:
+                progress_dialog.setValue(i)
+                i += 1
                 for video in camera_info["videos"]:
+
+                    if progress_dialog.wasCanceled():
+                        self.main_widget.clear_data()
+                        return "用户取消"
+
                     video_name = video[0]
                     video_index = video[1]
                     video_info = video_operator.get_video_info(video_path + video_name)
@@ -106,6 +121,9 @@ class MainWindow(QMainWindow):
 
             video_index_list = list(video_item_dict.keys())
             video_index_list.sort()
+
+            progress_dialog.close()
+
             for index in video_index_list:
                 self.main_widget.add_video(video_item_dict[index])
 
