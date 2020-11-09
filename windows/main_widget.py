@@ -238,9 +238,10 @@ class MainWidget(QWidget):
             self.avatar_label.IMG_ROOT_PATH = data_root + "/image"
 
     def reset_data(self):
-        pass
-        self.preview_list.clearSelection()
-        self.window.set_data(self.data_root)
+        if self.data_root:
+            pass
+            self.preview_list.clearSelection()
+            self.window.set_data(self.data_root)
 
     def __on_button_open_mot_clicked(self):
         logger.info("Switching MOT layout")
