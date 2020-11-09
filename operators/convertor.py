@@ -32,7 +32,7 @@ def img_path_2_id(path: str) -> int:
 
 
 def txt_path_2_img_path(path: str) -> str:
-    match = re.match(r"(.*)reid_data.([0-9])-[0-9]([/\\].*?).txt", path)
+    match = re.match(r"(.*)reid_data.([0-9]+)-[0-9]+([/\\].*?).txt", path)
     if match:
         return match.group(1) + match.group(2) + match.group(3)
     else:
