@@ -23,7 +23,7 @@ class MainWidget(QWidget):
     screenh: int = 0
     window = None
     layout_mode = LAYOUT_MAIN
-    data_root = "data/group1"
+    data_root = ""
 
     def __init__(self, screenw: int, screenh: int, window):
         QWidget.__init__(self)
