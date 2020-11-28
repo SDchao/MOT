@@ -11,6 +11,7 @@ from windows.avatar_label import AvatarLabel
 from operators.convertor import get_absolute_qurl
 from operators.motlogging import logger
 from windows.track_widget import TrackWidget
+from windows.illustration_label import IllustrationLabel
 
 LAYOUT_MAIN = 1
 LAYOUT_MOT = 2
@@ -110,6 +111,9 @@ class MainWidget(QWidget):
         self.track_view = TrackWidget(screenw * 0.2, screenh * 0.2, 1272, 720)
         self.main_video_view.paint_board.track_widget = self.track_view
 
+        # 右图示
+        self.illustration_label = IllustrationLabel()
+
         # 右地图
         self.map_label = MapLabel()
         # self.map_label.setFixedSize(411 * 2, 282 * 2)
@@ -118,6 +122,7 @@ class MainWidget(QWidget):
         right_v_layout = QVBoxLayout()
         right_v_layout.addWidget(self.avatar_label, 0, Qt.AlignCenter)
         right_v_layout.addWidget(self.track_view, 0, Qt.AlignCenter)
+        right_v_layout.addWidget(self.illustration_label, 0, Qt.AlignCenter)
         right_v_layout.addWidget(self.map_label, 0, Qt.AlignCenter)
 
         self.avatar_label.hide()
@@ -248,6 +253,7 @@ class MainWidget(QWidget):
         self.layout_mode = LAYOUT_MOT
 
         self.track_view.hide()
+        self.illustration_label.hide()
         self.map_label.hide()
         self.avatar_label.hide()
 
@@ -267,6 +273,7 @@ class MainWidget(QWidget):
         logger.info("Switching Main layout")
         self.layout_mode = LAYOUT_MAIN
         self.track_view.show()
+        self.illustration_label.show()
         self.map_label.show()
         self.avatar_label.hide()
         # 设置宽度
@@ -292,6 +299,7 @@ class MainWidget(QWidget):
         logger.info("Switching Reid layout")
         self.layout_mode = LAYOUT_REID
         self.track_view.hide()
+        self.illustration_label.hide()
         self.map_label.show()
         self.avatar_label.show()
         self.avatar_label.clear_id()
