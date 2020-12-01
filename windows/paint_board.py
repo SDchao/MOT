@@ -154,6 +154,7 @@ class PaintBoard(QWidget):
                     if ws_info[1] > 0.1:
                         self.selecting_ids.append(ws_info[0])
                         self.selecting_colors.append(self.prob_to_color(ws_info[1]))
+                        logger.info(f"Find wser {ws_info[0]}, prob: {ws_info[1]}")
             else:
                 self.selecting_ids.append(target_id)
         else:
@@ -161,10 +162,14 @@ class PaintBoard(QWidget):
         logger.info(f"Targeting new id {self.selecting_ids}")
 
     def prob_to_color(self, prob: float) -> QColor:
-        if prob < 0.4:
+        if prob < 0.2:
+            return Qt.blue
+        elif prob < 0.3:
             return Qt.yellow
-        elif prob < 0.7:
+        elif prob < 0.4:
             return QColor(255, 153, 0)
+        elif prob < 0.5:
+            return QColor(255, 192, 203)
         else:
             return Qt.red
 
