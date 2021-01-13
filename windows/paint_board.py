@@ -10,6 +10,7 @@ import operators.video_operator as video_operator
 from windows.track_widget import TrackWidget
 from windows.avatar_label import AvatarLabel
 from operators.convertor import img_path_2_id, txt_path_2_img_path
+import psutil
 
 
 class PaintBoard(QWidget):
@@ -18,7 +19,7 @@ class PaintBoard(QWidget):
     selecting_ids: list = []
     selecting_colors: list = []
     now_info: List[List] = []
-    showing_info: List = []
+    showing_info: List = []  # 正在展示的信息，[QRect, id， color]
     now_time: int = 0
     kw: float = 1
     kh: float = 1
@@ -31,6 +32,8 @@ class PaintBoard(QWidget):
     init_show_all: bool = False
 
     color_list = [Qt.green, Qt.red, Qt.blue, Qt.cyan, Qt.magenta]
+
+    track_max_count: int = -1
 
     def __init__(self, parent=None, track_view=None, init_show_all=False):
         QWidget.__init__(self, parent)
@@ -88,9 +91,19 @@ class PaintBoard(QWidget):
                 # painter.drawRect(1, 1, 157, 452)
         if self.track_widget:
             points: Dict[int, List[QPoint, QColor]] = {}
-            for info in self.showing_info:
-                rect: QRect = info[0]
-                points[info[1]] = [rect.center(), info[2]]
+            now_count = -1  # 确保目标进入轨迹显示
+
+            # 添加目标id
+            for now_id in self.selecting_ids:
+                for info in self.showing_info:
+                    if info[1] == now_id:
+                        rect: QRect = info[0]
+                        points[info[1]] = [rect.center(), info[2]]
+                        break
+
+                now_count += 1
+                if now_count >= self.track_max_count > 0:
+                    break
 
             self.track_widget.add_points(points)
 
@@ -146,6 +159,8 @@ class PaintBoard(QWidget):
         if ws_mode:
             ws_list = self.now_data_collection.get_ws_id_list(target_id)  # [(wser id, prob)]
             if ws_list:
+                # sort ws list
+                ws_list.sort(key=lambda elem: elem[1], reverse=True)
                 # Add target id in list
                 self.selecting_ids.append(target_id)
                 self.selecting_colors.append(Qt.green)
