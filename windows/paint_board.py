@@ -21,10 +21,12 @@ class PaintBoard(QWidget):
     now_info: List[List] = []
     showing_info: List = []  # 正在展示的信息，[QRect, id， color]
     now_time: int = 0
+    total_time: int = 0
     kw: float = 1
     kh: float = 1
     text_offset = [30, 30]
     font = QFont("Microsoft YaHei", 12)
+    dash_font = QFont("Fixedsys", 12)
     metrics = QFontMetrics(font)
     last_raw_size: QSize = None
     track_widget: TrackWidget = None
@@ -34,6 +36,9 @@ class PaintBoard(QWidget):
     color_list = [Qt.green, Qt.red, Qt.blue, Qt.cyan, Qt.magenta]
 
     track_max_count: int = -1
+
+    last_cpu_call_time = 0
+    last_cpu: str = "CPU: 0.0%"
 
     def __init__(self, parent=None, track_view=None, init_show_all=False):
         QWidget.__init__(self, parent)
@@ -89,6 +94,7 @@ class PaintBoard(QWidget):
                 painter.setPen(Qt.white)
                 painter.drawText(text_rect, Qt.AlignCenter, str(data.no))
                 # painter.drawRect(1, 1, 157, 452)
+
         if self.track_widget:
             points: Dict[int, List[QPoint, QColor]] = {}
             now_count = -1  # 确保目标进入轨迹显示
@@ -107,6 +113,33 @@ class PaintBoard(QWidget):
 
             self.track_widget.add_points(points)
 
+        # 绘制dashboard
+        if self.now_time > 0:
+            painter.setFont(self.dash_font)
+            painter.setPen(Qt.white)
+            painter.setBrush(Qt.black)
+            block_length = 15
+
+            p = psutil.Process()
+            if self.now_time - self.last_cpu_call_time > 300:
+                cpu_usage = f"CPU: {psutil.cpu_percent()}%"
+                self.last_cpu = cpu_usage
+                self.last_cpu_call_time = self.now_time
+            else:
+                cpu_usage = self.last_cpu
+
+            mem_percentage_str = format(p.memory_percent("vms"), ".2f")
+            mem_usage = f"MEM: {mem_percentage_str}%"
+            progress = ""
+            if self.total_time > 0:
+                progress_percentage_str = format(self.now_time / self.total_time * 100, ".2f") + "%"
+                progress = f"PRG: {self.now_time} / {self.total_time} ({progress_percentage_str})"
+
+            all_text = ("   " + cpu_usage.ljust(block_length, " ") + mem_usage.ljust(block_length, " ") +
+                        progress.ljust(block_length, " ") + "\n")
+
+            painter.drawText(self.rect(), Qt.AlignLeft | Qt.AlignBottom, all_text)
+
     def read_data(self, video_path: str, fps: float, use_clean_data: bool = False):
         if hasattr(self, "now_data_collection"):
             del self.now_data_collection
@@ -114,6 +147,9 @@ class PaintBoard(QWidget):
 
     def set_now_time(self, now_time: int):
         self.now_time = now_time
+
+    def set_total_time(self, total_time: int):
+        self.total_time = total_time
 
     def set_raw_size(self, raw_size: QSize):
         self.last_raw_size = raw_size

@@ -37,6 +37,7 @@ class MainWidget(QWidget):
         self.player = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         # 设置帧触发器
         self.player.positionChanged.connect(self.__on_position_changed)
+        self.player.durationChanged.connect(self.__on_duration_changed)
         # self.player.setPlaybackRate(3)
         self.player.setNotifyInterval(1000 / 30)
         self.play_list = QMediaPlaylist()
@@ -159,6 +160,9 @@ class MainWidget(QWidget):
         self.main_video_view.paint_board.set_now_time(pos)
         self.main_video_view.paint_board.update()
         self.avatar_label.check_avatar_update(pos)
+
+    def __on_duration_changed(self, duration):
+        self.main_video_view.paint_board.set_total_time(duration)
 
     def __on_video_mouse_press(self, event: QMouseEvent):
         ws_mode = True
