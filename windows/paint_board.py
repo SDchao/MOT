@@ -18,6 +18,7 @@ class PaintBoard(QWidget):
     user_selected_id: int = -1
     selecting_ids: list = []
     selecting_colors: list = []
+    ws_list: list = []
     now_info: List[List] = []
     showing_info: List = []  # 正在展示的信息，[QRect, id， color]
     now_time: int = 0
@@ -26,7 +27,7 @@ class PaintBoard(QWidget):
     kh: float = 1
     text_offset = [30, 30]
     font = QFont("Microsoft YaHei", 12)
-    dash_font = QFont("Fixedsys", 12)
+    dash_font = QFont("Terminal", 15)
     metrics = QFontMetrics(font)
     last_raw_size: QSize = None
     track_widget: TrackWidget = None
@@ -116,10 +117,13 @@ class PaintBoard(QWidget):
         # 绘制dashboard
         if self.now_time > 0:
             painter.setFont(self.dash_font)
-            painter.setPen(Qt.white)
+            painter.setPen(Qt.green)
             painter.setBrush(Qt.black)
             block_length = 15
+            block_per_line = 3
+            all_text_list = []
 
+            # CPU
             p = psutil.Process()
             if self.now_time - self.last_cpu_call_time > 300:
                 cpu_usage = f"CPU: {psutil.cpu_percent()}%"
@@ -127,17 +131,41 @@ class PaintBoard(QWidget):
                 self.last_cpu_call_time = self.now_time
             else:
                 cpu_usage = self.last_cpu
+            all_text_list.append(cpu_usage)
 
+            # MEM
             mem_percentage_str = format(p.memory_percent("vms"), ".2f")
             mem_usage = f"MEM: {mem_percentage_str}%"
+            all_text_list.append(mem_usage)
+
+            # PRG
             progress = ""
             if self.total_time > 0:
                 progress_percentage_str = format(self.now_time / self.total_time * 100, ".2f") + "%"
                 progress = f"PRG: {self.now_time} / {self.total_time} ({progress_percentage_str})"
+            all_text_list.append(progress)
 
-            all_text = ("   " + cpu_usage.ljust(block_length, " ") + mem_usage.ljust(block_length, " ") +
-                        progress.ljust(block_length, " ") + "\n")
+            # ws prob
+            now_count = 0
+            for ws_item in self.ws_list:
+                all_text_list.append(f"ws {ws_item[0]}: {ws_item[1]}")
+                now_count += 1
+                if now_count >= self.track_max_count > 0:
+                    break
 
+            all_text = "   "
+            now_line_count = 0
+            for text in all_text_list:
+                all_text += text.ljust(block_length, " ")
+                now_line_count += 1
+                if now_line_count >= block_per_line:
+                    all_text += "\n   "
+                    now_line_count = 0
+
+            if not all_text.endswith("\n   "):
+                all_text += "\n   "
+
+            # Drawing
             painter.drawText(self.rect(), Qt.AlignLeft | Qt.AlignBottom, all_text)
 
     def read_data(self, video_path: str, fps: float, use_clean_data: bool = False):
@@ -192,6 +220,7 @@ class PaintBoard(QWidget):
         self.user_selected_id = target_id
         self.selecting_ids = []
         self.selecting_colors = []
+        self.ws_list = []
         if ws_mode:
             ws_list = self.now_data_collection.get_ws_id_list(target_id)  # [(wser id, prob)]
             if ws_list:
@@ -205,6 +234,7 @@ class PaintBoard(QWidget):
                     if ws_info[1] > 0.1:
                         self.selecting_ids.append(ws_info[0])
                         self.selecting_colors.append(self.prob_to_color(ws_info[1]))
+                        self.ws_list.append((ws_info[0], ws_info[1]))
                         logger.info(f"Find wser {ws_info[0]}, prob: {ws_info[1]}")
             else:
                 self.selecting_ids.append(target_id)
