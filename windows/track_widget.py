@@ -16,7 +16,7 @@ class TrackWidget(QWidget):
     def __init__(self, w, h, raw_w, raw_h):
         super().__init__()
 
-        self.setMinimumSize(w, h)
+        self.setFixedSize(w, h)
         self.kw = w / raw_w
         self.kh = h / raw_h
 

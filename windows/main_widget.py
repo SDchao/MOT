@@ -1,5 +1,6 @@
 from PySide2.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QGridLayout,
-                               QSizePolicy, QAbstractItemView, QStyle, QListWidgetItem)
+                               QSizePolicy, QAbstractItemView, QStyle, QListWidgetItem, QSlider, QLabel, QHBoxLayout,
+                               QLineEdit)
 from PySide2.QtMultimedia import QMediaPlayer, QMediaPlaylist
 from PySide2.QtGui import QMouseEvent
 from PySide2.QtCore import Qt
@@ -32,6 +33,10 @@ class MainWidget(QWidget):
         self.screenh = screenh
         self.window = window
 
+        # 模拟分辨率调试
+        # screenw = 1920
+        # screenh = 1080
+
         self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         # 播放器
         self.player = QMediaPlayer(None, QMediaPlayer.VideoSurface)
@@ -63,6 +68,7 @@ class MainWidget(QWidget):
         for button in left_button_group:
             button.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
             button.setMaximumHeight(100)
+            button.setFixedWidth(screenw * 0.2)
 
         # 左侧功能按钮布局
         left_v_layout = QVBoxLayout()
@@ -94,7 +100,10 @@ class MainWidget(QWidget):
         self.main_video_widget.setMinimumSize(1272, 720)
         lay.addWidget(self.main_video_widget)
         """
-        self.main_video_view = VideoGraphicsView(self.player, 1272, 720)
+        video_width = screenw * 0.6625
+        video_height = video_width * 0.5625
+
+        self.main_video_view = VideoGraphicsView(self.player, video_width, video_height)
 
         # 暂停按钮
         self.pause_button = QPushButton()
@@ -109,8 +118,31 @@ class MainWidget(QWidget):
         self.main_video_view.paint_board.set_avatar_label(self.avatar_label)
 
         # 右轨迹图
-        self.track_view = TrackWidget(screenw * 0.2, screenh * 0.2, 1272, 720)
+        self.track_view = TrackWidget(screenw * 0.2, screenh * 0.2, video_width, video_height)
         self.main_video_view.paint_board.track_widget = self.track_view
+
+        # 右滑动条布局
+        self.max_track_layout = QHBoxLayout()
+
+        max_track_label = QLabel("轨迹显示个数")
+
+        self.max_track_slider = QSlider(Qt.Horizontal)
+        self.max_track_slider.setMinimum(1)
+        self.max_track_slider.setMaximum(5)
+        self.max_track_slider.setValue(1)
+        self.max_track_slider.setFixedWidth(screenw * 0.15)
+        self.max_track_slider.valueChanged.connect(self.__on_slider_max_track_value_changed)
+        self.main_video_view.paint_board.set_max_track_slider(self.max_track_slider)
+
+        self.max_track_edit = QLineEdit()
+        self.max_track_edit.setText("1")
+        self.max_track_edit.setEnabled(False)
+
+        self.max_track_layout.addWidget(max_track_label)
+        self.max_track_layout.addWidget(self.max_track_slider)
+        self.max_track_layout.addWidget(self.max_track_edit)
+
+        self.main_video_view.paint_board.set_track_max_count(1)
 
         # 右图示
         self.illustration_label = IllustrationLabel()
@@ -123,6 +155,7 @@ class MainWidget(QWidget):
         right_v_layout = QVBoxLayout()
         right_v_layout.addWidget(self.avatar_label, 0, Qt.AlignCenter)
         right_v_layout.addWidget(self.track_view, 0, Qt.AlignCenter)
+        right_v_layout.addLayout(self.max_track_layout, 0)
         right_v_layout.addWidget(self.illustration_label, 0, Qt.AlignCenter)
         right_v_layout.addWidget(self.map_label, 0, Qt.AlignCenter)
 
@@ -251,6 +284,11 @@ class MainWidget(QWidget):
             pass
             self.preview_list.clearSelection()
             self.window.set_data(self.data_root)
+
+    def __on_slider_max_track_value_changed(self, value):
+        self.main_video_view.paint_board.set_track_max_count(value)
+        self.max_track_edit.setText(str(value))
+        self.track_view.clear()
 
     def __on_button_open_mot_clicked(self):
         logger.info("Switching MOT layout")

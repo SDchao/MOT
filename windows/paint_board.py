@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QWidget
+from PySide2.QtWidgets import QWidget, QSlider
 from PySide2.QtCore import Qt, QSize, QRect, QPoint
 from PySide2.QtGui import QPainter, QPen, QFont, QFontMetrics, QMouseEvent, QColor
 from typing import List, Dict, Optional
@@ -37,6 +37,7 @@ class PaintBoard(QWidget):
     color_list = [Qt.green, Qt.red, Qt.blue, Qt.cyan, Qt.magenta]
 
     track_max_count: int = -1
+    max_track_slider: QSlider
 
     last_cpu_call_time = 0
     last_cpu: str = "CPU: 0.0%"
@@ -50,6 +51,9 @@ class PaintBoard(QWidget):
 
     def set_avatar_label(self, avatar_label):
         self.avatar_label = avatar_label
+
+    def set_max_track_slider(self, max_track_slider: QSlider):
+        self.max_track_slider = max_track_slider
 
     def paintEvent(self, e):
         painter = QPainter(self)
@@ -236,6 +240,10 @@ class PaintBoard(QWidget):
                         self.selecting_colors.append(self.prob_to_color(ws_info[1]))
                         self.ws_list.append((ws_info[0], ws_info[1]))
                         logger.info(f"Find wser {ws_info[0]}, prob: {ws_info[1]}")
+
+                if self.max_track_slider.value() > len(self.ws_list):
+                    self.max_track_slider.setValue(len(self.ws_list))
+                self.max_track_slider.setMaximum(len(self.ws_list))
             else:
                 self.selecting_ids.append(target_id)
         else:
@@ -279,3 +287,6 @@ class PaintBoard(QWidget):
             self.selecting_ids = []
             self.selecting_colors = []
             self.user_selected_id = -1
+
+    def set_track_max_count(self, value):
+        self.track_max_count = value
