@@ -279,6 +279,7 @@ class MainWidget(QWidget):
         self.layout_mode = LAYOUT_MOT
 
         self.track_view.hide()
+        self.max_track_layout.hide()
         self.illustration_label.hide()
         self.map_label.hide()
         self.avatar_label.hide()
@@ -299,6 +300,7 @@ class MainWidget(QWidget):
         logger.info("Switching Main layout")
         self.layout_mode = LAYOUT_MAIN
         self.track_view.show()
+        self.max_track_layout.show()
         self.illustration_label.show()
         self.map_label.show()
         self.avatar_label.hide()
@@ -325,6 +327,7 @@ class MainWidget(QWidget):
         logger.info("Switching Reid layout")
         self.layout_mode = LAYOUT_REID
         self.track_view.hide()
+        self.max_track_layout.hide()
         self.illustration_label.hide()
         self.map_label.show()
         self.avatar_label.show()

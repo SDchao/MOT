@@ -29,3 +29,13 @@ class TrackSliderLayout(QHBoxLayout):
 
     def __on_slider_max_track_value_changed(self, value):
         self.line_edit.setText(str(value))
+
+    def hide(self):
+        self.label.hide()
+        self.slider.hide()
+        self.line_edit.hide()
+
+    def show(self):
+        self.label.show()
+        self.slider.show()
+        self.line_edit.show()
