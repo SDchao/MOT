@@ -5,6 +5,7 @@ from PySide2.QtMultimedia import QMediaPlayer, QMediaPlaylist
 from PySide2.QtGui import QMouseEvent
 from PySide2.QtCore import Qt
 from windows.preview_list_widget import PreviewListWidget
+from windows.track_slider_layout import TrackSliderLayout
 from windows.video_view import VideoGraphicsView
 from windows.preview_item import PreviewItem
 from windows.map_label import MapLabel
@@ -68,7 +69,7 @@ class MainWidget(QWidget):
         for button in left_button_group:
             button.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
             button.setMaximumHeight(100)
-            button.setFixedWidth(screenw * 0.2)
+            button.setMaximumWidth(180)
 
         # 左侧功能按钮布局
         left_v_layout = QVBoxLayout()
@@ -100,7 +101,7 @@ class MainWidget(QWidget):
         self.main_video_widget.setMinimumSize(1272, 720)
         lay.addWidget(self.main_video_widget)
         """
-        video_width = screenw * 0.6625
+        video_width = screenw * 0.5
         video_height = video_width * 0.5625
 
         self.main_video_view = VideoGraphicsView(self.player, video_width, video_height)
@@ -122,25 +123,9 @@ class MainWidget(QWidget):
         self.main_video_view.paint_board.track_widget = self.track_view
 
         # 右滑动条布局
-        self.max_track_layout = QHBoxLayout()
-
-        max_track_label = QLabel("轨迹显示个数")
-
-        self.max_track_slider = QSlider(Qt.Horizontal)
-        self.max_track_slider.setMinimum(1)
-        self.max_track_slider.setMaximum(5)
-        self.max_track_slider.setValue(1)
-        self.max_track_slider.setFixedWidth(screenw * 0.15)
-        self.max_track_slider.valueChanged.connect(self.__on_slider_max_track_value_changed)
-        self.main_video_view.paint_board.set_max_track_slider(self.max_track_slider)
-
-        self.max_track_edit = QLineEdit()
-        self.max_track_edit.setText("1")
-        self.max_track_edit.setEnabled(False)
-
-        self.max_track_layout.addWidget(max_track_label)
-        self.max_track_layout.addWidget(self.max_track_slider)
-        self.max_track_layout.addWidget(self.max_track_edit)
+        self.max_track_layout = TrackSliderLayout(screenw * 0.2)
+        self.main_video_view.paint_board.set_max_track_slider(self.max_track_layout.slider)
+        self.max_track_layout.slider.valueChanged.connect(self.__on_slider_max_track_value_changed)
 
         self.main_video_view.paint_board.set_track_max_count(1)
 
@@ -287,7 +272,6 @@ class MainWidget(QWidget):
 
     def __on_slider_max_track_value_changed(self, value):
         self.main_video_view.paint_board.set_track_max_count(value)
-        self.max_track_edit.setText(str(value))
         self.track_view.clear()
 
     def __on_button_open_mot_clicked(self):
