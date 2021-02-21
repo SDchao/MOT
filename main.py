@@ -1,5 +1,7 @@
 from PySide2.QtWidgets import QApplication
 import sys
+
+from windows.compare_widget import CompareWidget
 from windows.main_window import MainWindow
 from windows.main_widget import MainWidget
 import operators.video_operator as video_operator
@@ -15,7 +17,10 @@ desktopRect = QApplication.primaryScreen().geometry()
 main_window = MainWindow()
 main_widget = MainWidget(desktopRect.width(), desktopRect.height(), main_window)
 main_window.main_widget = main_widget
-main_window.setCentralWidget(main_widget)
+
+compare_widget = CompareWidget(desktopRect.width(), desktopRect.height(), main_window)
+
+main_window.setCentralWidget(compare_widget)
 
 app.setStyleSheet(open("windows/qss/MainStyle.qss", "r").read())
 

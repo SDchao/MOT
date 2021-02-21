@@ -1,5 +1,6 @@
 import json
 
+import PySide2
 from PySide2.QtWidgets import QMainWindow, QAction, QApplication, QFileDialog, QMessageBox, QProgressDialog
 from PySide2.QtCore import Slot, Qt
 import sys
@@ -91,7 +92,8 @@ class MainWindow(QMainWindow):
             self.setWindowTitle(info["name"])
             cameras_info = info["cameras"]
             map_poses = info["mapPos"]
-            self.main_widget.map_label.set_map(data_root + "/map.jpg", map_poses)
+            if hasattr(self.main_widget, 'map_label'):
+                self.main_widget.map_label.set_map(data_root + "/map.jpg", map_poses)
             # main_widget.set_reid_container(reid_container)
 
             video_item_dict = {}
@@ -149,6 +151,10 @@ class MainWindow(QMainWindow):
 
     def show_message(self, msg: str, timeout=5000):
         self.status.showMessage(msg, timeout)
+
+    def setCentralWidget(self, widget: PySide2.QtWidgets.QWidget):
+        super(MainWindow, self).setCentralWidget(widget)
+        self.main_widget = widget
 
     @Slot()
     def exit_app(self):
