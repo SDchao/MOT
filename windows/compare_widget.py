@@ -16,7 +16,8 @@ class CompareWidget(QWidget):
     screenw: int = 0
     screenh: int = 0
     window = None
-    data_root = ""
+    data_root1 = ""
+    data_root2 = ""
 
     def __init__(self, screenw: int, screenh: int, window):
         QWidget.__init__(self)
@@ -156,10 +157,10 @@ class CompareWidget(QWidget):
                 last_item = self.preview_list.item(self.last_index)
                 if isinstance(last_item, PreviewItem):
                     self.video_view1.paint_board.renew_select(self.last_index, index, pos, last_item.fps,
-                                                              self.data_root,
+                                                              self.data_root1,
                                                               False)
                     self.video_view2.paint_board.renew_select(self.last_index, index, pos, last_item.fps,
-                                                              self.data_root,
+                                                              self.data_root1,
                                                               False)
 
             self.last_index = index
@@ -196,13 +197,16 @@ class CompareWidget(QWidget):
             self.window.show_message("播放视频")
 
     def set_data(self, data_root: str):
-        self.data_root = data_root
+        self.data_root1 = data_root
+
+    def set_compare_data(self, data_root: str):
+        self.data_root2 = data_root
 
     def reset_data(self):
-        if self.data_root:
+        if self.data_root1:
             pass
             self.preview_list.clearSelection()
-            self.window.set_data(self.data_root)
+            self.window.set_data(self.data_root1)
 
     def adjustSize(self):
         super().adjustSize()

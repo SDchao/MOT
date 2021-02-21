@@ -1,4 +1,5 @@
 import json
+from time import sleep
 
 import PySide2
 from PySide2.QtWidgets import QMainWindow, QAction, QApplication, QFileDialog, QMessageBox, QProgressDialog
@@ -9,14 +10,22 @@ from operators import video_operator
 from operators.motlogging import logger
 from windows.preview_item import PreviewItem
 from windows.main_widget import MainWidget
+from windows.compare_widget import CompareWidget
 
 
 class MainWindow(QMainWindow):
-    main_widget: MainWidget = None
+    now_widget = None
+    widget_type = ""
+    screenw = -1
+    screenh = -1
 
     def __init__(self):
         QMainWindow.__init__(self)
         self.setWindowTitle("MOT")
+
+        desktop_rect = QApplication.primaryScreen().geometry()
+        self.screenw = desktop_rect.width()
+        self.screenh = desktop_rect.height()
 
         # Menu
         self.menu = self.menuBar()
@@ -26,6 +35,22 @@ class MainWindow(QMainWindow):
         open_action.setShortcut("Ctrl+O")
         open_action.triggered.connect(self.open_data)
         self.file_menu.addAction(open_action)
+
+        # Widget Select
+        self.widget_menu = self.menu.addMenu("视图选择")
+        # Main Widget
+        self.main_widget_action = QAction("主视图", self)
+        self.main_widget_action.triggered.connect(self.set_main_widget)
+        self.main_widget_action.setCheckable(True)
+        self.main_widget_action.setChecked(True)
+        # Compare Widget
+        self.compare_widget_action = QAction("比较视图", self)
+        self.compare_widget_action.triggered.connect(self.set_compare_widget)
+        self.compare_widget_action.setCheckable(True)
+        self.compare_widget_action.setChecked(False)
+
+        self.widget_menu.addAction(self.main_widget_action)
+        self.widget_menu.addAction(self.compare_widget_action)
 
         # Exit
         exit_action = QAction("退出", self)
@@ -82,8 +107,8 @@ class MainWindow(QMainWindow):
         progress_dialog.setWindowModality(Qt.WindowModal)
         progress_dialog.setMinimumDuration(0)
 
-        self.main_widget.clear_data()
-        self.main_widget.set_data(data_root)
+        self.now_widget.clear_data()
+        self.now_widget.set_data(data_root)
 
         info_path = data_root + "/info.json"
         video_path = data_root + "/videos/"
@@ -92,9 +117,8 @@ class MainWindow(QMainWindow):
             self.setWindowTitle(info["name"])
             cameras_info = info["cameras"]
             map_poses = info["mapPos"]
-            if hasattr(self.main_widget, 'map_label'):
-                self.main_widget.map_label.set_map(data_root + "/map.jpg", map_poses)
-            # main_widget.set_reid_container(reid_container)
+            if hasattr(self.now_widget, 'map_label'):
+                self.now_widget.map_label.set_map(data_root + "/map.jpg", map_poses)
 
             video_item_dict = {}
 
@@ -107,7 +131,7 @@ class MainWindow(QMainWindow):
                 for video in camera_info["videos"]:
 
                     if progress_dialog.wasCanceled():
-                        self.main_widget.clear_data()
+                        self.now_widget.clear_data()
                         return "用户取消"
 
                     video_name = video[0]
@@ -118,7 +142,6 @@ class MainWindow(QMainWindow):
                         continue
                     index = int(camera_info["mapPosIndex"])
                     item = PreviewItem(video_info, map_poses[index])
-                    # main_widget.add_video(item)
                     video_item_dict[video_index] = item
 
             video_index_list = list(video_item_dict.keys())
@@ -127,47 +150,72 @@ class MainWindow(QMainWindow):
             progress_dialog.close()
 
             for index in video_index_list:
-                self.main_widget.add_video(video_item_dict[index])
+                self.now_widget.add_video(video_item_dict[index])
 
             return ""
         except FileNotFoundError as e:
             logger.error(f"Cannot load file {e.filename}")
-            self.main_widget.clear_data()
+            self.now_widget.clear_data()
             return f"无法载入文件{e.filename}"
         except KeyError as e:
             logger.error(f"Incorrect info json {info_path}, no key named {e}")
-            self.main_widget.clear_data()
+            self.now_widget.clear_data()
             return f"错误数据格式\n{info_path}\n无法找到键: {e}"
 
     def center_screen(self):
         desktop_rect = QApplication.primaryScreen().geometry()
         center = desktop_rect.center()
-        self.move(center.x() - self.width() * 0.5,
-                  center.y() - self.height() * 0.5)
+        self.move(center.x() - self.now_widget.width() * 0.5,
+                  center.y() - self.now_widget.height() * 0.5)
 
     def adjustSize(self):
         super(MainWindow, self).adjustSize()
+        self.setFixedSize(self.size())
         self.center_screen()
 
     def show_message(self, msg: str, timeout=5000):
         self.status.showMessage(msg, timeout)
-
-    def setCentralWidget(self, widget: PySide2.QtWidgets.QWidget):
-        super(MainWindow, self).setCentralWidget(widget)
-        self.main_widget = widget
 
     @Slot()
     def exit_app(self):
         sys.exit()
 
     @Slot()
-    def set_data_mode_auto(self):
-        self.main_widget.set_data_mode(False)
-        self.data_mode_auto_action.setChecked(True)
-        self.data_mode_clean_action.setChecked(False)
+    def set_main_widget(self):
+        self.main_widget_action.setChecked(True)
+        self.compare_widget_action.setChecked(False)
+        if self.widget_type != "Main":
+            self.hide()
+            self.widget_type = "Main"
+            self.now_widget = MainWidget(self.screenw, self.screenh, self)
+            self.now_widget.clear_data()
+            self.setCentralWidget(self.now_widget)
+            self.show()
+            self.adjustSize()
+            self.show_message("切换至主视图")
 
     @Slot()
-    def set_data_mode_clean(self):
-        self.main_widget.set_data_mode(True)
-        self.data_mode_auto_action.setChecked(False)
-        self.data_mode_clean_action.setChecked(True)
+    def set_compare_widget(self):
+        self.main_widget_action.setChecked(False)
+        self.compare_widget_action.setChecked(True)
+        if self.widget_type != "Compare":
+            self.hide()
+            self.widget_type = "Compare"
+            self.now_widget = CompareWidget(self.screenw, self.screenh, self)
+            self.now_widget.clear_data()
+            self.setCentralWidget(self.now_widget)
+            self.show()
+            self.adjustSize()
+            self.show_message("切换至比较视图")
+
+    # @Slot()
+    # def set_data_mode_auto(self):
+    #     self.main_widget.set_data_mode(False)
+    #     self.data_mode_auto_action.setChecked(True)
+    #     self.data_mode_clean_action.setChecked(False)
+    #
+    # @Slot()
+    # def set_data_mode_clean(self):
+    #     self.main_widget.set_data_mode(True)
+    #     self.data_mode_auto_action.setChecked(False)
+    #     self.data_mode_clean_action.setChecked(True)

@@ -12,15 +12,14 @@ from operators.motlogging import logger
 
 app = QApplication(sys.argv)
 
-desktopRect = QApplication.primaryScreen().geometry()
-
 main_window = MainWindow()
-main_widget = MainWidget(desktopRect.width(), desktopRect.height(), main_window)
-main_window.main_widget = main_widget
+# main_widget = MainWidget(desktopRect.width(), desktopRect.height(), main_window)
+# main_window.main_widget = main_widget
 
-compare_widget = CompareWidget(desktopRect.width(), desktopRect.height(), main_window)
+# compare_widget = CompareWidget(desktopRect.width(), desktopRect.height(), main_window)
+# main_window.compare_widget = compare_widget
 
-main_window.setCentralWidget(compare_widget)
+main_window.set_main_widget()
 
 app.setStyleSheet(open("windows/qss/MainStyle.qss", "r").read())
 
