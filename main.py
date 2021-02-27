@@ -1,14 +1,8 @@
-from PySide2.QtWidgets import QApplication
 import sys
 
-from windows.compare_widget import CompareWidget
+from PySide2.QtWidgets import QApplication
+
 from windows.main_window import MainWindow
-from windows.main_widget import MainWidget
-import operators.video_operator as video_operator
-from operators.reid_operator import ReidContainer
-import json
-from windows.preview_item import PreviewItem
-from operators.motlogging import logger
 
 app = QApplication(sys.argv)
 
