@@ -1,16 +1,14 @@
 import json
-from time import sleep
-
-import PySide2
-from PySide2.QtWidgets import QMainWindow, QAction, QApplication, QFileDialog, QMessageBox, QProgressDialog
-from PySide2.QtCore import Slot, Qt
 import sys
+
+from PySide2.QtCore import Slot, Qt
+from PySide2.QtWidgets import QMainWindow, QAction, QApplication, QFileDialog, QMessageBox, QProgressDialog
 
 from operators import video_operator
 from operators.motlogging import logger
-from windows.preview_item import PreviewItem
-from windows.main_widget import MainWidget
 from windows.compare_widget import CompareWidget
+from windows.main_widget import MainWidget
+from windows.preview_item import PreviewItem
 
 
 class MainWindow(QMainWindow):

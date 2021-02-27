@@ -1,8 +1,9 @@
-from PySide2.QtWidgets import QListWidgetItem
 from PySide2.QtCore import QSize, QPoint
-from PySide2.QtGui import QIcon, QPixmap, QImage
-from operators.video_operator import VideoInfo
+from PySide2.QtGui import QIcon, QPixmap
+from PySide2.QtWidgets import QListWidgetItem
+
 from operators.convertor import str_2_point
+from operators.video_operator import VideoInfo
 
 
 class PreviewItem(QListWidgetItem):

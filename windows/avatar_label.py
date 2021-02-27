@@ -1,9 +1,10 @@
-from typing import List
 import os
+from typing import List
 
-from PySide2.QtWidgets import QLabel, QSizePolicy
-from PySide2.QtGui import QPixmap, QResizeEvent
 from PySide2.QtCore import Qt
+from PySide2.QtGui import QPixmap, QResizeEvent
+from PySide2.QtWidgets import QLabel
+
 from operators.convertor import img_path_2_frame, img_path_2_id
 from operators.motlogging import logger
 

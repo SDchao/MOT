@@ -1,7 +1,8 @@
-from PySide2.QtWidgets import QWidget
-from PySide2.QtCore import Qt, QPoint
-from PySide2.QtGui import QPalette, QPaintEvent, QPen, QPainter, QColor
 from typing import List, Dict
+
+from PySide2.QtCore import Qt, QPoint
+from PySide2.QtGui import QPaintEvent, QPen, QPainter, QColor
+from PySide2.QtWidgets import QWidget
 
 
 class TrackWidget(QWidget):

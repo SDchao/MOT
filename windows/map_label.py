@@ -1,6 +1,7 @@
-from PySide2.QtWidgets import QLabel, QSizePolicy
-from PySide2.QtGui import QPixmap, QResizeEvent, QPaintEvent, QPainter, QPen
 from PySide2.QtCore import Qt, QPoint
+from PySide2.QtGui import QPixmap, QResizeEvent, QPaintEvent, QPainter, QPen
+from PySide2.QtWidgets import QLabel, QSizePolicy
+
 from operators.convertor import str_2_point
 
 

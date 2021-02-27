@@ -1,7 +1,7 @@
+from PySide2.QtCore import Qt, QSizeF
 from PySide2.QtMultimediaWidgets import QGraphicsVideoItem
 from PySide2.QtWidgets import QGraphicsView, QGraphicsScene
-from PySide2.QtCore import Qt, QSizeF, QSize
-from PySide2.QtGui import QResizeEvent
+
 from windows.paint_board import PaintBoard
 
 

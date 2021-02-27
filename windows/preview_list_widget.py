@@ -1,6 +1,6 @@
 from PySide2.QtCore import QSize
-from PySide2.QtWidgets import QListView, QListWidget, QListWidgetItem, QSizePolicy
 from PySide2.QtCore import Qt
+from PySide2.QtWidgets import QListView, QListWidget, QSizePolicy
 
 from operators.motlogging import logger
 from windows.preview_item import PreviewItem

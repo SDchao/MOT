@@ -1,19 +1,19 @@
-from PySide2.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QGridLayout,
-                               QSizePolicy, QAbstractItemView, QStyle, QListWidgetItem, QSlider, QLabel, QHBoxLayout,
-                               QLineEdit)
-from PySide2.QtMultimedia import QMediaPlayer, QMediaPlaylist
-from PySide2.QtGui import QMouseEvent
 from PySide2.QtCore import Qt
-from windows.preview_list_widget import PreviewListWidget
-from windows.track_slider_layout import TrackSliderLayout
-from windows.video_view import VideoGraphicsView
-from windows.preview_item import PreviewItem
-from windows.map_label import MapLabel
-from windows.avatar_label import AvatarLabel
+from PySide2.QtGui import QMouseEvent
+from PySide2.QtMultimedia import QMediaPlayer, QMediaPlaylist
+from PySide2.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QGridLayout,
+                               QSizePolicy, QAbstractItemView, QStyle, QListWidgetItem)
+
 from operators.convertor import get_absolute_qurl
 from operators.motlogging import logger
-from windows.track_widget import TrackWidget
+from windows.avatar_label import AvatarLabel
 from windows.illustration_label import IllustrationLabel
+from windows.map_label import MapLabel
+from windows.preview_item import PreviewItem
+from windows.preview_list_widget import PreviewListWidget
+from windows.track_slider_layout import TrackSliderLayout
+from windows.track_widget import TrackWidget
+from windows.video_view import VideoGraphicsView
 
 LAYOUT_MAIN = 1
 LAYOUT_MOT = 2

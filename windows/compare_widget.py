@@ -1,14 +1,14 @@
-from PySide2.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QGridLayout,
-                               QSizePolicy, QAbstractItemView, QStyle, QListWidgetItem, QSlider, QLabel, QHBoxLayout,
-                               QLineEdit)
-from PySide2.QtMultimedia import QMediaPlayer, QMediaPlaylist
-from PySide2.QtGui import QMouseEvent
 from PySide2.QtCore import Qt
-from windows.preview_list_widget import PreviewListWidget
-from windows.video_view import VideoGraphicsView
-from windows.preview_item import PreviewItem
+from PySide2.QtGui import QMouseEvent
+from PySide2.QtMultimedia import QMediaPlayer, QMediaPlaylist
+from PySide2.QtWidgets import (QWidget, QPushButton, QGridLayout,
+                               QSizePolicy, QAbstractItemView, QStyle, QListWidgetItem)
+
 from operators.convertor import get_absolute_qurl
 from operators.motlogging import logger
+from windows.preview_item import PreviewItem
+from windows.preview_list_widget import PreviewListWidget
+from windows.video_view import VideoGraphicsView
 
 
 class CompareWidget(QWidget):

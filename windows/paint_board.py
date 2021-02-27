@@ -1,16 +1,17 @@
-from PySide2.QtWidgets import QWidget, QSlider
-from PySide2.QtCore import Qt, QSize, QRect, QPoint
-from PySide2.QtGui import QPainter, QPen, QFont, QFontMetrics, QMouseEvent, QColor
 from typing import List, Dict, Optional
 
-from operators.motlogging import logger
-from operators.video_operator import VideoDataCollection, VideoData
-from operators.reid_operator import ReidContainer, get_reid_dict
-import operators.video_operator as video_operator
-from windows.track_widget import TrackWidget
-from windows.avatar_label import AvatarLabel
-from operators.convertor import img_path_2_id, txt_path_2_img_path
 import psutil
+from PySide2.QtCore import Qt, QSize, QRect, QPoint
+from PySide2.QtGui import QPainter, QPen, QFont, QFontMetrics, QMouseEvent, QColor
+from PySide2.QtWidgets import QWidget, QSlider
+
+import operators.video_operator as video_operator
+from operators.convertor import img_path_2_id, txt_path_2_img_path
+from operators.motlogging import logger
+from operators.reid_operator import get_reid_dict
+from operators.video_operator import VideoDataCollection
+from windows.avatar_label import AvatarLabel
+from windows.track_widget import TrackWidget
 
 
 class PaintBoard(QWidget):
