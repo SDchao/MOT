@@ -40,8 +40,24 @@ class PaintBoard(QWidget):
     track_max_count: int = -1
     max_track_slider: QSlider
 
-    last_cpu_call_time = 0
-    last_cpu: str = "CPU: 0.0%"
+    _last_cpu_call_time = 0
+    _last_cpu: str = "CPU: 0.0%"
+
+    @property
+    def last_cpu_call_time(self):
+        return PaintBoard._last_cpu_call_time
+
+    @property
+    def last_cpu(self):
+        return PaintBoard._last_cpu
+
+    @last_cpu_call_time.setter
+    def last_cpu_call_time(self, value):
+        PaintBoard._last_cpu_call_time = value
+
+    @last_cpu.setter
+    def last_cpu(self, value):
+        PaintBoard._last_cpu = value
 
     def __init__(self, parent=None, track_view=None, init_show_all=False):
         QWidget.__init__(self, parent)
