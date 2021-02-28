@@ -14,6 +14,19 @@ from windows.avatar_label import AvatarLabel
 from windows.track_widget import TrackWidget
 
 
+def prob_to_color(prob: float) -> QColor:
+    if prob < 0.2:
+        return Qt.blue
+    elif prob < 0.3:
+        return Qt.yellow
+    elif prob < 0.4:
+        return QColor(255, 153, 0)
+    elif prob < 0.5:
+        return QColor(255, 192, 203)
+    else:
+        return Qt.red
+
+
 class PaintBoard(QWidget):
     now_data_collection: VideoDataCollection
     user_selected_id: int = -1
@@ -254,7 +267,7 @@ class PaintBoard(QWidget):
                 for ws_info in ws_list:
                     if ws_info[1] > 0.1:
                         self.selecting_ids.append(ws_info[0])
-                        self.selecting_colors.append(self.prob_to_color(ws_info[1]))
+                        self.selecting_colors.append(prob_to_color(ws_info[1]))
                         self.ws_list.append((ws_info[0], ws_info[1]))
                         logger.info(f"Find wser {ws_info[0]}, prob: {ws_info[1]}")
 
@@ -266,18 +279,6 @@ class PaintBoard(QWidget):
         else:
             self.selecting_ids.append(target_id)
         logger.info(f"Targeting new id {self.selecting_ids}")
-
-    def prob_to_color(self, prob: float) -> QColor:
-        if prob < 0.2:
-            return Qt.blue
-        elif prob < 0.3:
-            return Qt.yellow
-        elif prob < 0.4:
-            return QColor(255, 153, 0)
-        elif prob < 0.5:
-            return QColor(255, 192, 203)
-        else:
-            return Qt.red
 
     def on_click(self, event: QMouseEvent, ws_mode=True) -> Optional[int]:
         click_point = event.pos()
