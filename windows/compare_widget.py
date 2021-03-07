@@ -141,7 +141,7 @@ class CompareWidget(QWidget):
     def __change_video_data(self, item: PreviewItem):
         self.video_view1.paint_board.read_data(item.video_path, item.fps)
         self.video_view1.paint_board.set_raw_size(item.video_size)
-        self.video_view2.paint_board.read_data(item.video_path, item.fps)
+        self.video_view2.paint_board.read_data(item.video_path.replace(self.data_root1, self.data_root2), item.fps)
         self.video_view2.paint_board.set_raw_size(item.video_size)
 
     def __current_index_changed(self, index: int):
@@ -160,7 +160,7 @@ class CompareWidget(QWidget):
                                                               self.data_root1,
                                                               False)
                     self.video_view2.paint_board.renew_select(self.last_index, index, pos, last_item.fps,
-                                                              self.data_root1,
+                                                              self.data_root2,
                                                               False)
 
             self.last_index = index
@@ -198,6 +198,8 @@ class CompareWidget(QWidget):
 
     def set_data(self, data_root: str):
         self.data_root1 = data_root
+        if not self.data_root2:
+            self.data_root2 = self.data_root1
 
     def set_compare_data(self, data_root: str):
         self.data_root2 = data_root

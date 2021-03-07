@@ -33,7 +33,11 @@ class MainWindow(QMainWindow):
         open_action.setShortcut("Ctrl+O")
         open_action.triggered.connect(self.open_data)
         self.file_menu.addAction(open_action)
-
+        # Second data select
+        self.open_second_action = QAction("打开比较目录..", self)
+        self.file_menu.addAction(self.open_second_action)
+        self.open_second_action.setDisabled(True)
+        self.open_second_action.triggered.connect(self.open_second_data)
         # Widget Select
         self.widget_menu = self.menu.addMenu("视图选择")
         # Main Widget
@@ -97,6 +101,16 @@ class MainWindow(QMainWindow):
                 msg_box.setWindowTitle("成功")
                 msg_box.setText("载入成功")
                 msg_box.exec_()
+
+    @Slot()
+    def open_second_data(self):
+        user_selected_dir = QFileDialog.getExistingDirectory(self, "选择数据文件夹", ".", QFileDialog.ShowDirsOnly)
+        if user_selected_dir:
+            self.now_widget.set_compare_data(user_selected_dir)
+            msg_box = QMessageBox()
+            msg_box.setWindowTitle("成功")
+            msg_box.setText("载入成功，切换播放视频后生效")
+            msg_box.exec_()
 
     def set_data(self, data_root: str):
         # Open Process Dialog
@@ -182,6 +196,7 @@ class MainWindow(QMainWindow):
     def set_main_widget(self):
         self.main_widget_action.setChecked(True)
         self.compare_widget_action.setChecked(False)
+        self.open_second_action.setDisabled(True)
         if self.widget_type != "Main":
             self.hide()
             self.widget_type = "Main"
@@ -196,6 +211,7 @@ class MainWindow(QMainWindow):
     def set_compare_widget(self):
         self.main_widget_action.setChecked(False)
         self.compare_widget_action.setChecked(True)
+        self.open_second_action.setDisabled(False)
         if self.widget_type != "Compare":
             self.hide()
             self.widget_type = "Compare"
