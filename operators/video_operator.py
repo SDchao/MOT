@@ -1,13 +1,14 @@
-import cv2
-from PySide2.QtGui import QImage
-from PySide2.QtCore import QSize, QRect
 import os
-import re
-
-from typing import List, Union, Tuple
 from operator import attrgetter
+from typing import List, Union, Tuple
+
+import cv2
+from PySide2.QtCore import QSize, QRect
+from PySide2.QtGui import QImage
+
 from operators.convertor import cv_frame_2_qimage
 from operators.motlogging import logger
+from operators.ws_reader import read_ws
 
 
 class VideoInfo(object):
@@ -80,26 +81,7 @@ class VideoDataCollection(object):
             logger.error("Unable to read data: " + data_path)
             logger.error(e)
         # 读取ws
-        try:
-            with open(ws_path, "r", encoding="utf8") as f:
-                for line in f:
-                    line = line.strip()
-                    if line[0] == "#":
-                        continue
-
-                    # l_list = line.split("<-")
-                    l_list = re.split(r"<-|,", line)
-                    if len(l_list) == 2:
-                        self.ws_list.append((int(l_list[0]), int(l_list[1]), 1.0))
-                    elif len(l_list) == 3:
-                        self.ws_list.append((int(l_list[0]), int(l_list[1]), float(l_list[2])))
-                    else:
-                        logger.error(f"Invalid data in {ws_path}: {line}")
-
-                logger.info(f"Read ws {ws_path} , found {len(self.ws_list)} lines")
-        except IOError as e:
-            logger.error("Unable to read ws: " + ws_path)
-            logger.error(e)
+        self.ws_list = read_ws(ws_path)
 
     def get_ws_id_list(self, target_id: int) -> List[Tuple[int, float]]:
         result = []
