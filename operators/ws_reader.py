@@ -10,7 +10,7 @@ def read_ws(file_path: str) -> List[Tuple[int, int, float]]:
         with open(file_path, "r", encoding="utf8") as f:
             for line in f:
                 line = line.strip()
-                if line or line[0] == "#":
+                if not line or line[0] == "#":
                     continue
 
                 l_list = re.split(r"<-|,", line)
