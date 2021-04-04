@@ -10,6 +10,7 @@ from operators.convertor import img_path_2_id, txt_path_2_img_path
 from operators.motlogging import logger
 from operators.reid_operator import get_reid_dict
 from operators.video_operator import VideoDataCollection
+from operators.ws_reader import WsData
 from windows.avatar_label import AvatarLabel
 from windows.track_widget import TrackWidget
 
@@ -240,7 +241,7 @@ class PaintBoard(QWidget):
             reid_dict = get_reid_dict(last_index, now_id, now_frame, new_index, data_root)
             if "list" in reid_dict and reid_dict["list"]:
                 new_id = img_path_2_id(reid_dict["list"][0])
-                self.__set_id(new_id, ws_mode)
+                self.set_id(new_id, ws_mode)
                 origin_img_path = txt_path_2_img_path(reid_dict["origin"])
                 self.avatar_label.set_avatar(origin_img_path)
                 # self.avatar_label.set_id(new_index, new_id)
@@ -250,7 +251,7 @@ class PaintBoard(QWidget):
                 self.avatar_label.clear_id()
                 logger.info(f"REID: no paring id, clearing")
 
-    def __set_id(self, target_id: int, ws_mode=True):
+    def set_id(self, target_id: int, ws_mode=True):
         self.user_selected_id = target_id
         self.selecting_ids = []
         self.selecting_colors = []
@@ -280,6 +281,17 @@ class PaintBoard(QWidget):
             self.selecting_ids.append(target_id)
         logger.info(f"Targeting new id {self.selecting_ids}")
 
+    def set_ws_focus(self, ws_data: WsData):
+        self.clear_id()
+        self.selecting_ids = [ws_data.victim, ws_data.follower]
+        self.selecting_colors = [Qt.green, prob_to_color(ws_data.prob)]
+        logger.info(f"Targeting ws: {ws_data}")
+
+    def set_ids(self, targets: List[int]):
+        self.clear_id()
+        self.selecting_ids = targets
+        logger.info(f"Targeting new ids {self.selecting_ids}")
+
     def on_click(self, event: QMouseEvent, ws_mode=True) -> Optional[int]:
         click_point = event.pos()
         if self.track_widget:
@@ -288,7 +300,7 @@ class PaintBoard(QWidget):
             rect: QRect = info[0]
             if rect.contains(click_point):
                 target_id = info[1]
-                self.__set_id(target_id, ws_mode)
+                self.set_id(target_id, ws_mode)
                 return target_id
 
         self.selecting_ids = []
@@ -302,9 +314,9 @@ class PaintBoard(QWidget):
         if self.avatar_label:
             self.avatar_label.clear_id()
 
-            self.selecting_ids = []
-            self.selecting_colors = []
-            self.user_selected_id = -1
+        self.selecting_ids = []
+        self.selecting_colors = []
+        self.user_selected_id = -1
 
     def set_track_max_count(self, value):
         self.track_max_count = value
