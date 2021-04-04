@@ -120,6 +120,13 @@ class VideoDataCollection(object):
 
         return result
 
+    def get_first_show_time(self, target_id: int):
+        for data in self.data_list:
+            if data.no == target_id:
+                return int(data.frame / self.fps)
+
+        return 0
+
 
 def get_video_info(video_path: str) -> VideoInfo:
     name = os.path.splitext(os.path.split(video_path)[1])[0]
@@ -134,7 +141,7 @@ def get_video_info(video_path: str) -> VideoInfo:
     return VideoInfo(True, q_image, size, name, fps, video_path)
 
 
-def get_video_data(video_path: str, fps: float, use_clean_data) -> VideoDataCollection:
+def get_video_data(video_path: str, fps: float, use_clean_data=False) -> VideoDataCollection:
     head_path = os.path.splitext(video_path)[0]
     data_path = head_path + ".data"
     if use_clean_data:
