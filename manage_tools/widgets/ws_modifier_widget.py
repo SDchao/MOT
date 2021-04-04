@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List
 
 from PySide2.QtWidgets import QListWidget
 
@@ -18,6 +18,7 @@ class WsModifyWidget(ModifierWidget):
 
         self.ws_list_widget = QListWidget(self)
         self.ws_list_widget.setMaximumWidth(200)
+        self.ws_list_widget.currentItemChanged.connect(self._on_current_item_changed)
 
         self.left_v_layout.addWidget(self.ws_list_widget)
 
@@ -25,6 +26,12 @@ class WsModifyWidget(ModifierWidget):
         self.ws_list_widget.clear()
         for ws_data in self.ws_list:
             self.ws_list_widget.addItem(str(ws_data))
+
+    def _on_current_item_changed(self):
+        now_ws_data = self.ws_list[self.ws_list_widget.currentIndex().row()]
+        first_show_time = self.paint_board.now_data_collection.get_first_show_time(now_ws_data.follower)
+        self.player.setPosition(first_show_time)
+        self.paint_board.set_ws_focus(now_ws_data)
 
     def open(self, file_path: str):
         self.ws_list = read_ws(file_path)
