@@ -130,6 +130,7 @@ class ModifierWidget(QWidget):
             qurl = get_absolute_qurl(video_path)
             self.play_list.addMedia(qurl)
             self.player.play()
+            self._on_pause_button_clicked()
 
     def _on_position_changed(self, pos):
         self.main_video_view.paint_board.set_now_time(pos)
