@@ -1,8 +1,9 @@
 import os
 
-from PySide2.QtWidgets import QMainWindow, QAction, QFileDialog
+from PySide2.QtWidgets import QMainWindow, QAction, QFileDialog, QMessageBox, QApplication
 
 from manage_tools.widgets.modifier_widget_parent import ModifierWidget
+from operators.motlogging import logger
 
 
 class ModifierMainWindow(QMainWindow):
@@ -39,15 +40,24 @@ class ModifierMainWindow(QMainWindow):
 
         self.setCentralWidget(main_widget)
 
-    def open_data(self):
-        user_select_path = QFileDialog.getOpenFileName(self,
-                                                       "选择打开的数据文件", "..", self.centralWidget().file_filter)[0]
-        if user_select_path:
-            if self.centralWidget().open(user_select_path) == 0:
-                self.opening_file_path = user_select_path
-                self.save_action.setEnabled(True)
-                self.save_as_action.setEnabled(True)
-                self.setWindowTitle(os.path.split(user_select_path)[1])
+    def open_data(self, path: str):
+        if not path:
+            user_video_path = QFileDialog.getOpenFileName(self,
+                                                          "选择打开的视频文件", ".",
+                                                          "*.avi;;*.mp4;;*.flv")[0]
+        else:
+            user_video_path = path
+
+        if user_video_path:
+            video_name = os.path.splitext(user_video_path)[0]
+            data_path = video_name + self.centralWidget().file_ext
+            if not os.path.exists(data_path):
+                logger.error(f"Unable to find {data_path}")
+                error_box = QMessageBox(QMessageBox.Critical, "错误", "无法找到视频对应的数据文件")
+                error_box.exec_()
+                return
+            if self.centralWidget().open(data_path) == 0:
+                self.centralWidget().set_video(user_video_path)
 
     def save_data(self):
         if self.opening_file_path:
@@ -64,3 +74,14 @@ class ModifierMainWindow(QMainWindow):
 
     def exit(self):
         self.close()
+
+    def center_screen(self):
+        desktop_rect = QApplication.primaryScreen().geometry()
+        center = desktop_rect.center()
+        self.move(center.x() - self.centralWidget().width() * 0.5,
+                  center.y() - self.centralWidget().height() * 0.5)
+
+    def adjustSize(self):
+        super(QMainWindow, self).adjustSize()
+        self.setFixedSize(self.size())
+        self.center_screen()
