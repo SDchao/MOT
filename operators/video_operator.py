@@ -123,7 +123,7 @@ class VideoDataCollection(object):
     def get_first_show_time(self, target_id: int):
         for data in self.data_list:
             if data.no == target_id:
-                return int(data.frame / self.fps)
+                return int(data.frame / self.fps * 1000)
 
         return 0
 
