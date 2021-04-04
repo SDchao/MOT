@@ -4,11 +4,11 @@ from PySide2.QtWidgets import QListWidget
 
 from manage_tools.widgets.modifier_widget_parent import ModifierWidget
 from operators.motlogging import logger
-from operators.ws_reader import read_ws
+from operators.ws_reader import read_ws, WsData
 
 
 class WsModifyWidget(ModifierWidget):
-    ws_list: List[Tuple[int, int, float]]
+    ws_list: List[WsData]
     file_ext = ".ws"
     now_file_path = ""
 

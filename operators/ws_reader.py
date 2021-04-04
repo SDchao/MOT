@@ -25,9 +25,9 @@ def read_ws(file_path: str) -> List[WsData]:
                 l_list = re.split(r"<-|,", line)
                 try:
                     if len(l_list) == 2:
-                        ws_list.append((int(l_list[0]), int(l_list[1]), 1.0))
+                        ws_list.append(WsData(int(l_list[0]), int(l_list[1]), 1.0))
                     elif len(l_list) == 3:
-                        ws_list.append((int(l_list[0]), int(l_list[1]), float(l_list[2])))
+                        ws_list.append(WsData(int(l_list[0]), int(l_list[1]), float(l_list[2])))
                     else:
                         raise ValueError
                 except ValueError:
