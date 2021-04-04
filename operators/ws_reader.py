@@ -1,10 +1,19 @@
 import re
-from typing import List, Tuple
+from typing import List, NamedTuple
 
 from operators.motlogging import logger
 
 
-def read_ws(file_path: str) -> List[Tuple[int, int, float]]:
+class WsData(NamedTuple):
+    victim: int
+    follower: int
+    prob: float = 1.0
+
+    def __str__(self):
+        return f"{self.victim}<-{self.follower},{self.prob}"
+
+
+def read_ws(file_path: str) -> List[WsData]:
     ws_list = []
     try:
         with open(file_path, "r", encoding="utf8") as f:
