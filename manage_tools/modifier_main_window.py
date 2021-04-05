@@ -40,7 +40,7 @@ class ModifierMainWindow(QMainWindow):
 
         self.setCentralWidget(main_widget)
 
-    def open_data(self, path: str):
+    def open_data(self, path: str = None):
         if not path:
             user_video_path = QFileDialog.getOpenFileName(self,
                                                           "选择打开的视频文件", ".",
@@ -55,9 +55,14 @@ class ModifierMainWindow(QMainWindow):
                 logger.error(f"Unable to find {data_path}")
                 error_box = QMessageBox(QMessageBox.Critical, "错误", "无法找到视频对应的数据文件")
                 error_box.exec_()
+                self.save_action.setEnabled(False)
+                self.save_as_action.setEnabled(False)
                 return
             if self.centralWidget().open(data_path) == 0:
+                self.opening_file_path = data_path
                 self.centralWidget().set_video(user_video_path)
+                self.save_action.setEnabled(True)
+                self.save_as_action.setEnabled(True)
 
     def save_data(self):
         if self.opening_file_path:
@@ -66,7 +71,7 @@ class ModifierMainWindow(QMainWindow):
     def save_as_data(self):
         if self.opening_file_path:
             user_select_path = QFileDialog.getSaveFileName(self,
-                                                           "选择另存为路径", "..", self.centralWidget().file_filter)[0]
+                                                           "选择另存为路径", "..", "*" + self.centralWidget().file_ext)[0]
             if user_select_path:
                 if self.centralWidget().save(user_select_path) == 0:
                     self.opening_file_path = user_select_path
