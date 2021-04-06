@@ -123,9 +123,37 @@ class VideoDataCollection(object):
     def get_first_show_time(self, target_id: int):
         for data in self.data_list:
             if data.no == target_id:
-                return int(data.frame / self.fps * 1000)
+                return round(data.frame / self.fps * 1000)
 
         return 0
+
+    def get_highlight(self, target_id: int) -> List[Tuple[int, int]]:
+        shown = False
+        shown_in_frame = False
+        now_frame = -1
+        start = -1
+
+        result = []
+        for data in self.data_list:
+            if data.frame > now_frame:
+                # 如果已经在这帧出现但之前未出现
+                if shown_in_frame and not shown:
+                    start = now_frame
+                    shown = True
+                # 如果已经出现但这帧没有出现
+                elif shown and not shown_in_frame:
+                    shown = False
+                    result.append((self.__f2p(start), self.__f2p(now_frame)))
+                now_frame = data.frame
+                shown_in_frame = False
+
+            if data.no == target_id:
+                shown_in_frame = True
+
+        return result
+
+    def __f2p(self, frame):
+        return round(frame / self.fps * 1000)
 
 
 def get_video_info(video_path: str) -> VideoInfo:
