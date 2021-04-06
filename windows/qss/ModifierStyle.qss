@@ -8,7 +8,6 @@ QPushButton {
     border-color: #757575;
     border-width: 2px;
     color: black;
-    min-width: 150px;
 }
 
 QPushButton:hover {
@@ -49,31 +48,22 @@ QListView::item:selected {
 }
 
 
-QScrollBar:horizontal {
+QScrollBar {
     border: none;
     background: #FAFAFA;
     height: 10px;
 }
 
-QScrollBar::handle:horizontal {
+QScrollBar::handle {
     border-radius: 5px;
     background: #BDBDBD;
     min-width: 20px;
 }
 
-QScrollBar::handle:horizontal:hover {
+QScrollBar::handle:hover {
     background: #9E9E9E;
 }
 
-QScrollBar::handle:horizontal:pressed {
+QScrollBar::handle:pressed {
     background: #757575;
-}
-
-QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical, QScrollBar::sub-line:horizontal, QScrollBar::add-line:horizontal {
-    width: 0;
-    height: 0;
-}
-
-QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical, QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
-    background: none;
 }
