@@ -53,9 +53,11 @@ class WsModifyWidget(ModifierWidget):
     def _on_current_item_changed(self):
         now_ws_data = self.ws_data_list[self.ws_list_widget.currentIndex().row()]
         first_show_time = self.paint_board.now_data_collection.get_first_show_time(now_ws_data.follower)
+        highlights = self.paint_board.now_data_collection.get_highlight(now_ws_data.follower)
         self.player.setPosition(first_show_time)
         self.paint_board.set_ws_focus(now_ws_data)
         self.ws_edit_widget.set_ws_data(now_ws_data)
+        self.progress_bar.set_highlight(highlights)
 
     def _on_delete_button_clicked(self):
         index = self.ws_list_widget.currentIndex().row()
