@@ -59,6 +59,9 @@ class VideoDataCollection(object):
 
         return result
 
+    def update_data(self, new_data: List[VideoData]):
+        self.data_list = new_data
+
     def get_data_by_time(self, time: int) -> List[VideoData]:
 
         if not self.data_list:
@@ -117,6 +120,9 @@ class VideoDataCollection(object):
 
             if data.no == target_id:
                 shown_in_frame = True
+
+        if shown:
+            result.append((self.__f2p(start), self.__f2p(now_frame)))
 
         return result
 
