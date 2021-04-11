@@ -15,9 +15,9 @@ class VideoData(object):
         self.vertexes = (a, b, c, d)
 
     def __str__(self):
-        return f"""frame: {self.frame}
-no: {self.no}
-vertexes: {self.vertexes}"""
+        return \
+            f"{self.frame},{self.no}," \
+            f"{self.vertexes[0]},{self.vertexes[1]},{self.vertexes[2]},{self.vertexes[3]},-1,-1,-1,-1"
 
 
 def read_data(path: str) -> List[VideoData]:
@@ -27,6 +27,10 @@ def read_data(path: str) -> List[VideoData]:
             for line in f:
                 line = line.strip()
                 l_list = line.split(",")
+
+                if line.startswith("#"):
+                    continue
+
                 if len(l_list) == 10:
                     data = VideoData(int(l_list[0]), int(l_list[1]), int(l_list[2]), int(l_list[3]), int(l_list[4]),
                                      int(l_list[5]))

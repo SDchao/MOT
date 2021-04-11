@@ -8,13 +8,13 @@ from operators.motlogging import logger
 from operators.ws_reader import read_ws, WsData
 
 
-class WsModifyWidget(ModifierWidget):
+class WsModifierWidget(ModifierWidget):
     ws_data_list: List[WsData]
     file_ext = ".ws"
     now_file_path = ""
 
     def __init__(self):
-        super(WsModifyWidget, self).__init__()
+        super(WsModifierWidget, self).__init__()
         self.paint_board.init_show_all = True
 
         self.ws_list_widget = QListWidget(self)
@@ -74,6 +74,7 @@ class WsModifyWidget(ModifierWidget):
         if index >= 0:
             self.ws_data_list.pop(index)
             self.update_info()
+        self._on_unselect_button_clicked()
 
     def _on_insert_button_clicked(self):
         ws_data = self.ws_edit_widget.get_ws_data()
