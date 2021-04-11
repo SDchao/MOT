@@ -168,6 +168,7 @@ class ModifierWidget(QWidget):
     def _on_progress_bar_pressed(self, event: QMouseEvent):
         if event.button() == Qt.LeftButton:
             self.progress_bar.is_pressing = True
+            self._on_progress_bar_move(event)
 
     def _on_progress_bar_released(self, event: QMouseEvent):
         if event.button() == Qt.LeftButton:
