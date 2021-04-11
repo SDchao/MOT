@@ -24,8 +24,12 @@ class WsModifyWidget(ModifierWidget):
         self.delete_button = QPushButton("删除选中记录")
         self.delete_button.clicked.connect(self._on_delete_button_clicked)
 
+        self.unselect_button = QPushButton("取消选择")
+        self.unselect_button.clicked.connect(self._on_unselect_button_clicked)
+
         self.left_v_layout.addWidget(self.ws_list_widget)
         self.left_v_layout.addWidget(self.delete_button)
+        self.left_v_layout.addWidget(self.unselect_button)
 
         self.ws_edit_widget = WsEditWidget()
         self.ws_edit_widget.setMaximumWidth(300)
@@ -58,6 +62,12 @@ class WsModifyWidget(ModifierWidget):
         self.paint_board.set_ws_focus(now_ws_data)
         self.ws_edit_widget.set_ws_data(now_ws_data)
         self.progress_bar.set_highlight(highlights)
+
+    def _on_unselect_button_clicked(self):
+        self.paint_board.clear_id()
+        self.ws_edit_widget.clear_ws_data()
+        self.progress_bar.clear_highlight()
+        self.ws_list_widget.clearSelection()
 
     def _on_delete_button_clicked(self):
         index = self.ws_list_widget.currentIndex().row()

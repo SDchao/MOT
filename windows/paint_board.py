@@ -318,5 +318,7 @@ class PaintBoard(QWidget):
         self.selecting_colors = []
         self.user_selected_id = -1
 
+        self.update()
+
     def set_track_max_count(self, value):
         self.track_max_count = value

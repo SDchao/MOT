@@ -1,5 +1,4 @@
 import os
-from operator import attrgetter
 from typing import List, Union, Tuple
 
 import cv2
@@ -7,7 +6,7 @@ from PySide2.QtCore import QSize, QRect
 from PySide2.QtGui import QImage
 
 from operators.convertor import cv_frame_2_qimage
-from operators.motlogging import logger
+from operators.data_reader import VideoData, read_data
 from operators.ws_reader import read_ws
 
 
@@ -37,22 +36,6 @@ fps: {self.fps}
         """
 
 
-class VideoData(object):
-    frame: int
-    no: int
-    vertexes: tuple
-
-    def __init__(self, frame: int, no: int, a: int, b: int, c: int, d: int):
-        self.frame = frame
-        self.no = no
-        self.vertexes = (a, b, c, d)
-
-    def __str__(self):
-        return f"""frame: {self.frame}
-no: {self.no}
-vertexes: {self.vertexes}"""
-
-
 class VideoDataCollection(object):
     data_list: List[VideoData] = []
     ws_list: List[Tuple[int, int, float]] = []  # [(target id, target wser id, porb)]
@@ -63,24 +46,9 @@ class VideoDataCollection(object):
         self.data_list = []
         self.ws_list = []
         self.last_index = 0
-        # 读取data
-        try:
-            with open(data_path, "r", encoding="utf8") as f:
-                for line in f:
-                    line = line.strip()
-                    l_list = line.split(",")
-                    if len(l_list) == 10:
-                        data = VideoData(int(l_list[0]), int(l_list[1]), int(l_list[2]), int(l_list[3]), int(l_list[4]),
-                                         int(l_list[5]))
-                        self.data_list.append(data)
-                    else:
-                        logger.error(f"Invalid data in {data_path}: {line}")
-            self.data_list.sort(key=attrgetter("frame"))
-            logger.info(f"Read data {data_path} , found {len(self.data_list)} lines")
-        except IOError as e:
-            logger.error("Unable to read data: " + data_path)
-            logger.error(e)
-        # 读取ws
+
+        self.data_list = read_data(data_path)
+
         self.ws_list = read_ws(ws_path)
 
     def get_ws_id_list(self, target_id: int) -> List[Tuple[int, float]]:

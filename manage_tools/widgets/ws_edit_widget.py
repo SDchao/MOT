@@ -60,6 +60,11 @@ class WsEditWidget(QWidget):
         self.follower_edit.setText(str(ws_data.follower))
         self.prob_edit.setText(str(ws_data.prob))
 
+    def clear_ws_data(self):
+        self.victim_edit.setText("")
+        self.follower_edit.setText("")
+        self.prob_edit.setText("")
+
     def get_ws_data(self):
         if all(self._pass_flag):
             return WsData(int(self.victim_edit.text()), int(self.follower_edit.text()), float(self.prob_edit.text()))

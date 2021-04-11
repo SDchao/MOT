@@ -9,7 +9,7 @@ class ProgressBar(QWidget):
     duration: int = 0
     now_position: int = 0
     highlight_positions: List[Tuple[int, int]] = []
-    is_pressing = False     # USED BY WIDGET PARENT
+    is_pressing = False  # USED BY WIDGET PARENT
 
     background_color = Qt.black
     played_color = QColor(66, 165, 245)
@@ -57,6 +57,10 @@ border-width: 2px;""")
 
     def set_highlight(self, highlights: List[Tuple[int, int]]):
         self.highlight_positions = highlights
+        self.update()
+
+    def clear_highlight(self):
+        self.highlight_positions = []
         self.update()
 
     def set_duration(self, duration: int):
