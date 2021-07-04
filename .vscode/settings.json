@@ -1,0 +1,4 @@
+{
+    "python.pythonPath": "D:\\SDK\\Python\\Python37\\python3.7.exe",
+    "python.linting.pylintArgs": ["--extension-pkg-whitelist=PySide2", "--disable=E0401"]
+}

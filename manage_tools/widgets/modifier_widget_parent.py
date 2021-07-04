@@ -168,11 +168,21 @@ class ModifierWidget(QWidget):
     def _on_progress_bar_pressed(self, event: QMouseEvent):
         if event.button() == Qt.LeftButton:
             self.progress_bar.is_pressing = True
+
+            if self.player.state() == QMediaPlayer.PlayingState:
+                self.progress_bar.play_after_drag = True
+                self.player.pause()
+            else:
+                self.progress_bar.play_after_drag = False
+
             self._on_progress_bar_move(event)
 
     def _on_progress_bar_released(self, event: QMouseEvent):
         if event.button() == Qt.LeftButton:
             self.progress_bar.is_pressing = False
+
+            if self.progress_bar.play_after_drag:
+                self.player.play()
 
     # Player_Control
     def _on_faster_button_clicked(self):

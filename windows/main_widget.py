@@ -124,10 +124,12 @@ class MainWidget(QWidget):
 
         # 右滑动条布局
         self.max_track_layout = TrackSliderLayout(screenw * 0.2)
+        self.max_track_layout.hide()
+        self.max_track_layout.slider.setValue(-1)
         self.main_video_view.paint_board.set_max_track_slider(self.max_track_layout.slider)
         self.max_track_layout.slider.valueChanged.connect(self.__on_slider_max_track_value_changed)
 
-        self.main_video_view.paint_board.set_track_max_count(1)
+        self.main_video_view.paint_board.set_track_max_count(-1)
 
         # 右图示
         self.illustration_label = IllustrationLabel()

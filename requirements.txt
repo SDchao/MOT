@@ -1,0 +1,8 @@
+colorama==0.4.4
+loguru==0.5.3
+numpy==1.21.0
+opencv-python==4.4.0.46
+psutil==5.8.0
+PySide2==5.15.2
+shiboken2==5.15.2
+win32-setctime==1.0.3

@@ -10,6 +10,7 @@ class ProgressBar(QWidget):
     now_position: int = 0
     highlight_positions: List[Tuple[int, int]] = []
     is_pressing = False  # USED BY WIDGET PARENT
+    play_after_drag = False  # USED BY WIDGET PARENT
 
     background_color = Qt.black
     played_color = QColor(66, 165, 245)
