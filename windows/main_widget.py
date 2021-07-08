@@ -56,8 +56,8 @@ class MainWidget(QWidget):
 
         # 左侧按钮
         self.button_open_main = QPushButton("主界面")
-        self.button_open_mot = QPushButton("MOT")
-        self.button_open_ReID = QPushButton("ReID")
+        self.button_open_mot = QPushButton("多目标跟踪")
+        self.button_open_ReID = QPushButton("跨场景跟踪")
 
         self.button_open_main.clicked.connect(self.__on_button_open_main_clicked)
         self.button_open_mot.clicked.connect(self.__on_button_open_mot_clicked)

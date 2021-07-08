@@ -19,7 +19,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         QMainWindow.__init__(self)
-        self.setWindowTitle("MOT")
+        self.setWindowTitle("多目标视频分析系统")
 
         desktop_rect = QApplication.primaryScreen().geometry()
         self.screenw = desktop_rect.width()
@@ -75,10 +75,10 @@ class MainWindow(QMainWindow):
         # self.data_mode.addAction(self.data_mode_clean_action)
 
         # Help
-        self.help_menu = self.menu.addMenu("帮助")
+        # self.help_menu = self.menu.addMenu("帮助")
         # About
-        about_action = QAction("关于", self)
-        self.help_menu.addAction(about_action)
+        # about_action = QAction("关于", self)
+        # self.help_menu.addAction(about_action)
 
         # Status
         self.status = self.statusBar()
