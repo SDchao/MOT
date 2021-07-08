@@ -296,7 +296,7 @@ class MainWidget(QWidget):
 
         self.adjustSize()
         self.reset_data()
-        self.window.show_message("已切换到 MOT 布局")
+        self.window.show_message("已切换到多目标跟踪")
 
     def __on_button_open_main_clicked(self):
         logger.info("Switching Main layout")
@@ -351,7 +351,7 @@ class MainWidget(QWidget):
 
         self.adjustSize()
         self.reset_data()
-        self.window.show_message("已切换到ReID布局")
+        self.window.show_message("已切换到跨场景跟踪")
 
     def adjustSize(self):
         super().adjustSize()
