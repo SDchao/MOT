@@ -133,7 +133,15 @@ class VideoDataCollection(object):
 def get_video_info(video_path: str) -> VideoInfo:
     name = os.path.splitext(os.path.split(video_path)[1])[0]
     cap = cv2.VideoCapture(video_path)
-    ret, frame = cap.read()
+
+    ret = False
+    frame = None
+
+    for i in range(10):
+        ret, frame = cap.read()
+        if ret:
+            break
+
     if not ret:
         return VideoInfo(False)
     size = QSize(cap.get(cv2.CAP_PROP_FRAME_WIDTH), cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
