@@ -11,11 +11,11 @@ class MapLabel(QLabel):
     raw_pixmap: QPixmap = None
     all_pos: list = []
 
-    def __init__(self, parent=None):
+    def __init__(self, width, parent=None):
         super().__init__(parent)
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         self.setAlignment(Qt.AlignLeft | Qt.AlignTop)
-        self.setMinimumSize(400, 400)
+        self.setMinimumSize(width, width * 0.5625)
 
         self.setObjectName("MapLabel")
 
