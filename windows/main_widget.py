@@ -35,8 +35,8 @@ class MainWidget(QWidget):
         self.window = window
 
         # 模拟分辨率调试
-        # screenw = 1920
-        # screenh = 1080
+        # screenw = 720 / 1080 * 1920
+        # screenh = 720
 
         self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         # 播放器
@@ -119,7 +119,7 @@ class MainWidget(QWidget):
         self.main_video_view.paint_board.set_avatar_label(self.avatar_label)
 
         # 右轨迹图
-        self.track_view = TrackWidget(screenw * 0.2, screenh * 0.2, video_width, video_height)
+        self.track_view = TrackWidget(screenw * 0.2, screenw * 0.2 * 0.5625, video_width, video_height)
         self.main_video_view.paint_board.track_widget = self.track_view
 
         # 右滑动条布局
@@ -132,10 +132,10 @@ class MainWidget(QWidget):
         self.main_video_view.paint_board.set_track_max_count(-1)
 
         # 右图示
-        self.illustration_label = IllustrationLabel()
+        self.illustration_label = IllustrationLabel(screenw * 0.2)
 
         # 右地图
-        self.map_label = MapLabel()
+        self.map_label = MapLabel(screenw * 0.2)
         # self.map_label.setFixedSize(411 * 2, 282 * 2)
 
         # 右布局
@@ -166,6 +166,8 @@ class MainWidget(QWidget):
         self.main_layout.setColumnStretch(1, 3)
         self.main_layout.setColumnStretch(2, 1)
 
+        self.main_layout.setColumnMinimumWidth(0, 100)
+        self.main_layout.setColumnMinimumWidth(1, self.screenw * 0.5)
         self.main_layout.setColumnMinimumWidth(2, self.screenw * 0.2)
 
         self.button_open_main.setDisabled(True)
