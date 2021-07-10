@@ -303,8 +303,7 @@ class PaintBoard(QWidget):
                 self.set_id(target_id, ws_mode)
                 return target_id
 
-        self.selecting_ids = []
-        self.user_selected_id = -1
+        self.clear_id()
         return None
 
     def clear_id(self):
@@ -317,6 +316,7 @@ class PaintBoard(QWidget):
         self.selecting_ids = []
         self.selecting_colors = []
         self.user_selected_id = -1
+        self.ws_list = []
 
         self.update()
 
