@@ -304,7 +304,7 @@ class MainWidget(QWidget):
         logger.info("Switching Main layout")
         self.layout_mode = LAYOUT_MAIN
         self.track_view.show()
-        self.max_track_layout.show()
+        # self.max_track_layout.show()
         self.illustration_label.show()
         self.map_label.show()
         self.avatar_label.hide()
