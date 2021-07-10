@@ -17,12 +17,14 @@ class AvatarLabel(QLabel):
     IMG_ROOT_PATH = ""
     need_update = False
 
-    def __init__(self, data_root: str, parent=None):
+    def __init__(self, width, height, data_root: str, parent=None):
         super().__init__(parent)
         self.setAlignment(Qt.AlignCenter)
-        self.setMinimumWidth(200)
-        self.setMaximumWidth(250)
-        self.setFixedHeight(400)
+        # self.setMinimumWidth(200)
+        # self.setMaximumWidth(250)
+        # self.setFixedHeight(400)
+
+        self.setFixedSize(width, height)
 
         self.setObjectName("AvatarLabel")
         self.IMG_ROOT_PATH = data_root + "/image"

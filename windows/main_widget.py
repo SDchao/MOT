@@ -67,9 +67,8 @@ class MainWidget(QWidget):
             self.button_open_main, self.button_open_mot, self.button_open_ReID)
 
         for button in left_button_group:
-            button.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
-            button.setMaximumHeight(100)
-            button.setMaximumWidth(180)
+            button.setFixedHeight(screenh * 0.5 / 6)
+            button.setMaximumWidth(screenw * 0.01)
 
         # 左侧功能按钮布局
         left_v_layout = QVBoxLayout()
@@ -110,12 +109,12 @@ class MainWidget(QWidget):
         self.pause_button = QPushButton()
         self.pause_button.setIcon(self.style().standardIcon(QStyle.SP_MediaPause))
         self.pause_button.clicked.connect(self.__on_pause_button_clicked)
-        self.pause_button.setMinimumWidth(100)
+        self.pause_button.setFixedWidth(screenw * 0.01)
 
         self.main_video_view.mousePressEvent = self.__on_video_mouse_press
 
         # 右头像
-        self.avatar_label = AvatarLabel(self.data_root)
+        self.avatar_label = AvatarLabel(screenw * 0.2, screenh * 0.3, self.data_root)
         self.main_video_view.paint_board.set_avatar_label(self.avatar_label)
 
         # 右轨迹图
