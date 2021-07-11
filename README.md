@@ -2,7 +2,7 @@
 需采用Python3.7环境，按照requirements.txt进行安装
 ```
 pip install -r requirements.txt
-``
+```
 
 此外，需要额外安装解码器。
 
@@ -27,6 +27,10 @@ export QT_DEBUG_PLUGINS=1
 ```
 
 获取无法加载的so文件，若为opencv目录下的so文件，将其删除即可解决冲突。
+
+```
+rm venv/lib/python3.7/site-packages/cv2/qt/plugins/platforms/libqxcb.so
+```
 
 # 运行方式
 运行主窗口：
