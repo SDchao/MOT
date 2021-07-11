@@ -247,7 +247,7 @@ class PaintBoard(QWidget):
                 # self.avatar_label.set_id(new_index, new_id)
                 logger.info(f"REID: {now_id} -> {new_id}")
             else:
-                self.selecting_ids = []
+                self.clear_id()
                 self.avatar_label.clear_id()
                 logger.info(f"REID: no paring id, clearing")
 
