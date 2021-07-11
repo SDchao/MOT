@@ -4,7 +4,7 @@ import os
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QMouseEvent
 from PySide2.QtMultimedia import QMediaPlayer, QMediaPlaylist
-from PySide2.QtWidgets import QWidget, QSizePolicy, QVBoxLayout, QHBoxLayout, QPushButton, QStyle
+from PySide2.QtWidgets import QWidget, QSizePolicy, QVBoxLayout, QHBoxLayout, QPushButton, QStyle, QApplication
 
 from manage_tools.widgets.progress_bar import ProgressBar
 from operators.convertor import get_absolute_qurl
@@ -31,7 +31,10 @@ class ModifierWidget(QWidget):
 
     def __init__(self):
         super(ModifierWidget, self).__init__()
-        self.setFixedSize(int(1920 * 0.8), int(1080 * 0.8))
+
+        desktop_rect = QApplication.primaryScreen().geometry()
+
+        self.setFixedSize(int(desktop_rect.width() * 0.8), int(desktop_rect.height() * 0.8))
         self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
 
         video_width = self.width() * 0.5
@@ -66,31 +69,31 @@ class ModifierWidget(QWidget):
         self.pause_button = QPushButton()
         self.pause_button.setIcon(self.style().standardIcon(QStyle.SP_MediaPause))
         self.pause_button.clicked.connect(self._on_pause_button_clicked)
-        self.pause_button.setFixedWidth(150)
+        self.pause_button.setFixedWidth(video_width * 0.15)
         self.pause_button.setFixedHeight(30)
         # Faster
         self.faster_button = QPushButton()
         self.faster_button.setIcon(self.style().standardIcon(QStyle.SP_MediaSkipForward))
         self.faster_button.clicked.connect(self._on_faster_button_clicked)
-        self.faster_button.setFixedWidth(50)
+        self.faster_button.setFixedWidth(video_width * 0.15)
         self.faster_button.setFixedHeight(30)
         # Slower
         self.slower_button = QPushButton()
         self.slower_button.setIcon(self.style().standardIcon(QStyle.SP_MediaSkipBackward))
         self.slower_button.clicked.connect(self._on_slower_button_clicked)
-        self.slower_button.setFixedWidth(50)
+        self.slower_button.setFixedWidth(video_width * 0.15)
         self.slower_button.setFixedHeight(30)
         # Forward
         self.forward_button = QPushButton()
         self.forward_button.setIcon(self.style().standardIcon(QStyle.SP_MediaSeekForward))
         self.forward_button.clicked.connect(self._on_forward_button_clicked)
-        self.forward_button.setFixedWidth(50)
+        self.forward_button.setFixedWidth(video_width * 0.15)
         self.slower_button.setFixedHeight(30)
         # Backward
         self.backward_button = QPushButton()
         self.backward_button.setIcon(self.style().standardIcon(QStyle.SP_MediaSeekBackward))
         self.backward_button.clicked.connect(self._on_backward_button_clicked)
-        self.backward_button.setFixedWidth(50)
+        self.backward_button.setFixedWidth(video_width * 0.15)
         self.backward_button.setFixedHeight(30)
 
         self.player_control_layout.addWidget(self.slower_button)

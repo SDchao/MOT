@@ -1,6 +1,6 @@
 from typing import List
 
-from PySide2.QtWidgets import QListWidget, QPushButton
+from PySide2.QtWidgets import QListWidget, QPushButton, QApplication
 
 from manage_tools.widgets.data_edit_widget import DataEditWidget
 from manage_tools.widgets.modifier_widget_parent import ModifierWidget
@@ -18,8 +18,10 @@ class DataModifierWidget(ModifierWidget):
         super(DataModifierWidget, self).__init__()
         self.paint_board.init_show_all = True
 
+        desktop_rect = QApplication.primaryScreen().geometry()
+
         self.id_list_widget = QListWidget(self)
-        self.id_list_widget.setMaximumWidth(200)
+        self.id_list_widget.setMaximumWidth(desktop_rect.width() * 0.8 * 0.15)
         self.id_list_widget.currentItemChanged.connect(self._on_current_item_changed)
 
         self.delete_button = QPushButton("删除选中记录")
@@ -29,7 +31,7 @@ class DataModifierWidget(ModifierWidget):
 
         self.data_edit_widget = DataEditWidget()
 
-        self.data_edit_widget.setMaximumWidth(200)
+        self.data_edit_widget.setMaximumWidth(desktop_rect.width() * 0.8 * 0.15)
 
         self.submit_button = QPushButton("确认修改")
         self.submit_button.clicked.connect(self._on_submit_button_clicked)

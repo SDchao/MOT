@@ -1,6 +1,6 @@
 from typing import List
 
-from PySide2.QtWidgets import QListWidget, QHBoxLayout, QPushButton
+from PySide2.QtWidgets import QListWidget, QHBoxLayout, QPushButton, QApplication
 
 from manage_tools.widgets.modifier_widget_parent import ModifierWidget
 from manage_tools.widgets.ws_edit_widget import WsEditWidget
@@ -17,8 +17,10 @@ class WsModifierWidget(ModifierWidget):
         super(WsModifierWidget, self).__init__()
         self.paint_board.init_show_all = True
 
+        desktop_rect = QApplication.primaryScreen().geometry()
+
         self.ws_list_widget = QListWidget(self)
-        self.ws_list_widget.setMaximumWidth(200)
+        self.ws_list_widget.setMaximumWidth(desktop_rect.width() * 0.8 * 0.15)
         self.ws_list_widget.currentItemChanged.connect(self._on_current_item_changed)
 
         self.delete_button = QPushButton("删除选中记录")
@@ -32,7 +34,7 @@ class WsModifierWidget(ModifierWidget):
         self.left_v_layout.addWidget(self.unselect_button)
 
         self.ws_edit_widget = WsEditWidget()
-        self.ws_edit_widget.setMaximumWidth(300)
+        self.ws_edit_widget.setMaximumWidth(desktop_rect.width() * 0.8 * 0.15)
         self.right_v_layout.addWidget(self.ws_edit_widget)
 
         # Submit Buttons
