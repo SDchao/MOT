@@ -12,4 +12,5 @@ class IllustrationLabel(QLabel):
         self.setFixedSize(width, width / 360 * 101)
         self.setObjectName("IllustrationLabel")
 
-        self.setPixmap(QPixmap("windows/images/illustration.png").scaled(QSize(width, width / 360 * 101)))
+        self.setPixmap(QPixmap("windows/images/illustration.png").scaled(QSize(width, width / 360 * 101),
+                                                                         mode=Qt.SmoothTransformation))
