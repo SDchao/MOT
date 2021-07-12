@@ -166,10 +166,12 @@ class MainWindow(QMainWindow):
 
             return ""
         except FileNotFoundError as e:
+            progress_dialog.close()
             logger.error(f"Cannot load file {e.filename}")
             self.now_widget.clear_data()
             return f"无法载入文件{e.filename}"
         except KeyError as e:
+            progress_dialog.close()
             logger.error(f"Incorrect info json {info_path}, no key named {e}")
             self.now_widget.clear_data()
             return f"错误数据格式\n{info_path}\n无法找到键: {e}"
