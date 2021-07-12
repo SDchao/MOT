@@ -45,14 +45,14 @@ class PaintBoard(QWidget):
     dash_font = QFont("Terminal", 15)
     metrics = QFontMetrics(font)
     last_raw_size: QSize = None
-    track_widget: TrackWidget = None
-    avatar_label: AvatarLabel = None
+    track_widget: Optional[TrackWidget] = None
+    avatar_label: Optional[AvatarLabel] = None
     init_show_all: bool = False
 
     color_list = [Qt.green, Qt.red, Qt.blue, Qt.cyan, Qt.magenta]
 
     track_max_count: int = -1
-    max_track_slider: QSlider
+    max_track_slider: Optional[QSlider] = None
 
     _last_cpu_call_time = 0
     _last_cpu: str = "CPU: 0.0%"
@@ -85,6 +85,18 @@ class PaintBoard(QWidget):
 
     def set_max_track_slider(self, max_track_slider: QSlider):
         self.max_track_slider = max_track_slider
+
+    def set_track_widget(self, track_widget):
+        self.track_widget = track_widget
+
+    def clear_avatar_label(self):
+        self.avatar_label = None
+
+    def clear_max_track_slider(self):
+        self.max_track_slider = None
+
+    def clear_track_widget(self):
+        self.track_widget = None
 
     def paintEvent(self, e):
         painter = QPainter(self)
@@ -243,12 +255,14 @@ class PaintBoard(QWidget):
                 new_id = img_path_2_id(reid_dict["list"][0])
                 self.set_id(new_id, ws_mode)
                 origin_img_path = txt_path_2_img_path(reid_dict["origin"])
-                self.avatar_label.set_avatar(origin_img_path)
+                if self.avatar_label:
+                    self.avatar_label.set_avatar(origin_img_path)
                 # self.avatar_label.set_id(new_index, new_id)
                 logger.info(f"REID: {now_id} -> {new_id}")
             else:
                 self.clear_id()
-                self.avatar_label.clear_id()
+                if self.avatar_label:
+                    self.avatar_label.clear_id()
                 logger.info(f"REID: no paring id, clearing")
 
     def set_id(self, target_id: int, ws_mode=True):
@@ -272,9 +286,10 @@ class PaintBoard(QWidget):
                         self.ws_list.append((ws_info[0], ws_info[1]))
                         logger.info(f"Find wser {ws_info[0]}, prob: {ws_info[1]}")
 
-                if self.max_track_slider.value() > len(self.ws_list):
-                    self.max_track_slider.setValue(len(self.ws_list))
-                self.max_track_slider.setMaximum(len(self.ws_list))
+                if self.max_track_slider:
+                    if self.max_track_slider.value() > len(self.ws_list):
+                        self.max_track_slider.setValue(len(self.ws_list))
+                    self.max_track_slider.setMaximum(len(self.ws_list))
             else:
                 self.selecting_ids.append(target_id)
         else:

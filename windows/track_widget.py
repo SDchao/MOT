@@ -9,7 +9,8 @@ class TrackWidget(QWidget):
     track_points: Dict[int, List] = {}
     final_points: Dict[int, QPoint] = {}
     colors: Dict[int, QColor] = {}
-    background_color = Qt.blue
+    background_color = Qt.darkBlue
+    outline_color = Qt.black
 
     kw = 1
     kh = 1
@@ -32,11 +33,13 @@ class TrackWidget(QWidget):
         super(TrackWidget, self).paintEvent(event)
         painter = QPainter(self)
         pen = QPen()
-        pen.setWidth(3)
+        pen.setWidth(2)
         pen.setCapStyle(Qt.RoundCap)
+        pen.setColor(self.outline_color)
 
         painter.setPen(pen)
         painter.fillRect(0, 0, self.width(), self.height(), self.background_color)
+        painter.drawRect(0, 0, self.width() - 2, self.height() - 2)
 
         index = 0
         pen.setWidth(10)

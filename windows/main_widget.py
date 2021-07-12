@@ -115,18 +115,18 @@ class MainWidget(QWidget):
 
         # 右头像
         self.avatar_label = AvatarLabel(screenw * 0.2, screenh * 0.3, self.data_root)
-        self.main_video_view.paint_board.set_avatar_label(self.avatar_label)
+        # self.main_video_view.paint_board.set_avatar_label(self.avatar_label)
 
         # 右轨迹图
         self.track_view = TrackWidget(screenw * 0.2, screenw * 0.2 * 0.5625, video_width, video_height)
-        self.main_video_view.paint_board.track_widget = self.track_view
+        self.main_video_view.paint_board.set_track_widget(self.track_view)
 
         # 右滑动条布局
-        self.max_track_layout = TrackSliderLayout(screenw * 0.2)
-        self.max_track_layout.hide()
-        self.max_track_layout.slider.setValue(-1)
-        self.main_video_view.paint_board.set_max_track_slider(self.max_track_layout.slider)
-        self.max_track_layout.slider.valueChanged.connect(self.__on_slider_max_track_value_changed)
+        # self.max_track_layout = TrackSliderLayout(screenw * 0.2)
+        # self.max_track_layout.hide()
+        # self.max_track_layout.slider.setValue(-1)
+        # self.main_video_view.paint_board.set_max_track_slider(self.max_track_layout.slider)
+        # self.max_track_layout.slider.valueChanged.connect(self.__on_slider_max_track_value_changed)
 
         self.main_video_view.paint_board.set_track_max_count(-1)
 
@@ -141,7 +141,7 @@ class MainWidget(QWidget):
         right_v_layout = QVBoxLayout()
         right_v_layout.addWidget(self.avatar_label, 0, Qt.AlignCenter)
         right_v_layout.addWidget(self.track_view, 0, Qt.AlignCenter)
-        right_v_layout.addLayout(self.max_track_layout, 0)
+        # right_v_layout.addLayout(self.max_track_layout, 0)
         right_v_layout.addWidget(self.illustration_label, 0, Qt.AlignCenter)
         right_v_layout.addWidget(self.map_label, 0, Qt.AlignCenter)
 
@@ -193,10 +193,11 @@ class MainWidget(QWidget):
         target_id = self.main_video_view.paint_board.on_click(event, ws_mode)
         self.main_video_view.paint_board.update()
 
-        if target_id:
-            self.avatar_label.set_id(self.last_index, target_id)
-        else:
-            self.avatar_label.clear_id()
+        if self.layout_mode == LAYOUT_REID:
+            if target_id:
+                self.avatar_label.set_id(self.last_index, target_id)
+            else:
+                self.avatar_label.clear_id()
 
         self.window.show_message("视频点击已处理")
 
@@ -282,7 +283,7 @@ class MainWidget(QWidget):
         self.layout_mode = LAYOUT_MOT
 
         self.track_view.hide()
-        self.max_track_layout.hide()
+        # self.max_track_layout.hide()
         self.illustration_label.hide()
         self.map_label.hide()
         self.avatar_label.hide()
@@ -294,6 +295,8 @@ class MainWidget(QWidget):
 
         self.main_video_view.paint_board.init_show_all = True
         self.main_video_view.paint_board.clear_id()
+        self.main_video_view.paint_board.clear_track_widget()
+        self.main_video_view.paint_board.clear_avatar_label()
 
         self.adjustSize()
         self.reset_data()
@@ -322,6 +325,9 @@ class MainWidget(QWidget):
         self.main_video_view.paint_board.clear_id()
         self.track_view.clear()
 
+        self.main_video_view.paint_board.set_track_widget(self.track_view)
+        self.main_video_view.paint_board.clear_avatar_label()
+
         self.adjustSize()
         self.reset_data()
         self.window.show_message("已切换到主界面布局")
@@ -330,7 +336,7 @@ class MainWidget(QWidget):
         logger.info("Switching Reid layout")
         self.layout_mode = LAYOUT_REID
         self.track_view.hide()
-        self.max_track_layout.hide()
+        # self.max_track_layout.hide()
         self.illustration_label.hide()
         self.map_label.show()
         self.avatar_label.show()
@@ -349,6 +355,9 @@ class MainWidget(QWidget):
         self.main_video_view.paint_board.init_show_all = False
         self.main_video_view.paint_board.clear_id()
         self.track_view.clear()
+
+        self.main_video_view.paint_board.clear_track_widget()
+        self.main_video_view.paint_board.set_avatar_label(self.avatar_label)
 
         self.adjustSize()
         self.reset_data()
